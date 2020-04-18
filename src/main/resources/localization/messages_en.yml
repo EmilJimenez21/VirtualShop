@@ -1,0 +1,36 @@
+Version: 5
+messages:
+  help:
+    buy: "/buy <item> <amount> [price]"
+    sell: "/sell <amount> <item> <price>"
+    stock: "/stock <player> [page]"
+    sales: "/sales <player> [page]"
+    cancel: "/cancel <item> [amount]"
+    find: "/find <item> [page]"
+  sales:
+    sale: "{seller} sold {amount} {item} to {buyer} for {price}"
+    self-purchase: "Managed to buy {amount} {item} for {price}"
+    seller-sale: "{buyer} just bought {amount} {item} for {price}"
+    no-sales: "{seller} hasn't made any sales"
+    self-no-sales: "You haven't made any sales"
+  stock:
+    broadcast: "{seller} listed {amount} {item} for {price} each"
+    listing: "{seller}: {amount} {item} for {price}"
+    cancelled: "You removed {amount} {item} from the shop"
+    removed: "Removed {amount} {item}"
+    no-stock: "No one is selling {item}"
+    seller-no-stock: "{seller} doesn't have any items for sale"
+    self-no-stock: "You don't have any items for sale"
+    cancel-no-stock: "You currently aren't selling any {item}"
+  error:
+    no-results: "Your search didn't return any results"
+    forbidden-item: "You cannot sell {item}"
+    modified-item: "You can not sell items that are damaged, renamed, or enchanted"
+    unknown-item: "What is {item}?"
+    unknown-player: "Player {player} was not found"
+    bad-number: "You must enter a quantity greater than 0"
+    bad-price: "Your price must be greater than $0.01"
+    bad-item: "You need to specify an item"
+    no-funds: "You don't have enough money"
+    no-items: "You don't have any {item}"
+    no-space: "You don't have any free space"

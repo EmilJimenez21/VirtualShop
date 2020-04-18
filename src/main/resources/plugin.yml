@@ -1,0 +1,7 @@
+name: Virtualshop
+version: ${project.version}
+main: me.emiljimenez21.virtualshop.Virtualshop
+api-version: 1.13
+depend:
+  - Essentials
+  - Vault
