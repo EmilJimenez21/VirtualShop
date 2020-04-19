@@ -25,7 +25,7 @@ public class Cancel extends SimpleCommand {
         List<String> response = new ArrayList<String>();
 
         if(args.length == 1) {
-            response.addAll(Virtualshop.essentials.getItemDb().listNames());
+            response.addAll(Virtualshop.itemDB.getDB().listNames());
         }
 
         return completeLastWord(response);

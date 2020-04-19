@@ -14,7 +14,7 @@ public class ShopItem {
 
     public ShopItem(String item) {
         try {
-            this.item = Virtualshop.essentials.getItemDb().get(item);
+            this.item = Virtualshop.itemDB.getDB().get(item);
             this.exists = true;
         } catch (Exception e) {
             this.exists = false;
@@ -26,11 +26,11 @@ public class ShopItem {
     }
 
     public String getName() {
-        return Virtualshop.essentials.getItemDb().name(this.item);
+        return Virtualshop.itemDB.getDB().get(this.item);
     }
 
     public static String getName(ItemStack item) {
-        return Virtualshop.essentials.getItemDb().name(item);
+        return Virtualshop.itemDB.getDB().get(item);
     }
 
     public boolean isModified(){

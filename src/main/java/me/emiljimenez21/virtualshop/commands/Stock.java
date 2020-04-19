@@ -3,7 +3,6 @@ package me.emiljimenez21.virtualshop.commands;
 import me.emiljimenez21.virtualshop.Virtualshop;
 import me.emiljimenez21.virtualshop.managers.PlayerManager;
 import me.emiljimenez21.virtualshop.objects.ShopPlayer;
-import me.emiljimenez21.virtualshop.objects.Transaction;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

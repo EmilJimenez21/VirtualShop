@@ -32,7 +32,7 @@ public class Sell extends SimpleCommand {
         }
 
         if(args.length == 2) {
-            response.addAll(Virtualshop.essentials.getItemDb().listNames());
+            response.addAll(Virtualshop.itemDB.getDB().listNames());
             response.add("held");
             response.add("hand");
         }

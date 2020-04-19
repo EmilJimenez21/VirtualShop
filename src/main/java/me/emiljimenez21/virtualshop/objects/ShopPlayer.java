@@ -1,6 +1,5 @@
 package me.emiljimenez21.virtualshop.objects;
 
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
