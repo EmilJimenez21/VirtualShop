@@ -90,7 +90,7 @@ public class MySQLDatabase extends SimpleDatabase {
         PreparedStatement query = null;
         ResultSet result = null;
         try {
-            query = this.prepareStatement("SELECT * FROM `" + stock_tbl + "` a JOIN users b ON a.seller = b.uuid WHERE item = ? ORDER BY price ASC");
+            query = this.prepareStatement("SELECT * FROM `" + stock_tbl + "` WHERE item = ? ORDER BY price ASC");
             query.setString(1, item);
             result = query.executeQuery();
             while(result.next()) {
