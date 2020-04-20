@@ -1,6 +1,7 @@
-Version: 1
+Version: 2
 Locale: "en"
 prefix: "&8(&9&lShop&8) "
+sound: true
 mysql:
   enabled: false
   host: "localhost"

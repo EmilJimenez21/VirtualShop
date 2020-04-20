@@ -2,6 +2,7 @@ package me.emiljimenez21.virtualshop.commands;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
 import me.emiljimenez21.virtualshop.objects.ShopItem;
+import me.emiljimenez21.virtualshop.objects.ShopPlayer;
 import me.emiljimenez21.virtualshop.objects.Stock;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.ChatColor;
@@ -45,8 +46,11 @@ public class Find extends SimpleCommand {
             setCooldown(3, TimeUnit.SECONDS);
         }
 
+        ShopPlayer player = new ShopPlayer(getPlayer());
+
         // Blueprint for arguments
         if(args.length < 1 || args.length > 2) {
+            player.playErrorSound();
             Messages.send(sender, Messages.HELP_FIND);
             return;
         }
@@ -54,6 +58,7 @@ public class Find extends SimpleCommand {
         // Validate that the first argument is a valid item
         ShopItem item = new ShopItem(args[0]);
         if(!item.exists){
+            player.playErrorSound();
             Messages.send(sender, Messages.ERROR_UNKNOWN_ITEM
                     .replace("{item}", Messages.formatItem(args[0]))
             );
@@ -64,6 +69,7 @@ public class Find extends SimpleCommand {
         if(args.length == 2) {
             // Validate that the second argument is a valid number
             if (!Valid.isInteger(args[1])) {
+                player.playErrorSound();
                 Messages.send(sender, Messages.ERROR_BAD_NUMBER);
                 return;
             }
@@ -71,6 +77,7 @@ public class Find extends SimpleCommand {
             page = Integer.parseInt(args[1]);
 
             if (page < 0) {
+                player.playErrorSound();
                 Messages.send(sender, Messages.ERROR_BAD_NUMBER);
                 return;
             }
@@ -79,6 +86,7 @@ public class Find extends SimpleCommand {
         List<Stock> stocks = Virtualshop.db.getDatabase().retrieveItemStock(item.getName());
 
         if(stocks.size() == 0) {
+            player.playErrorSound();
             Messages.send(sender, Messages.STOCK_NO_STOCK
                 .replace("{item}", Messages.formatItem(item.getName())));
             return;

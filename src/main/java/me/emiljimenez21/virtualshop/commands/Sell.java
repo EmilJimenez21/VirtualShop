@@ -58,6 +58,7 @@ public class Sell extends SimpleCommand {
         double price;
 
         if(args.length != 3) {
+            player.playErrorSound();
             Messages.send(sender, Messages.HELP_SELL);
             return;
         }
@@ -73,6 +74,7 @@ public class Sell extends SimpleCommand {
         i = item.getItem();
 
         if(i.isSimilar(new ItemStack(Material.AIR))){
+            player.playErrorSound();
             Messages.send(sender, Messages.ERROR_FORBIDDEN_SALE
                     .replace("{item}", Messages.formatItem(item.getName()))
             );
@@ -80,6 +82,7 @@ public class Sell extends SimpleCommand {
         }
 
         if(item.isModified()) {
+            player.playErrorSound();
             Messages.send(sender, Messages.ERROR_MODIFIED_ITEM);
             return;
         }
@@ -97,6 +100,7 @@ public class Sell extends SimpleCommand {
         }
 
         if(amount < 0) {
+            player.playErrorSound();
             Messages.send(sender, Messages.ERROR_BAD_NUMBER);
             return;
         }
@@ -104,6 +108,7 @@ public class Sell extends SimpleCommand {
         i.setAmount(amount);
 
         if(amount == 0) {
+            player.playErrorSound();
             Messages.send(sender, Messages.ERROR_NO_ITEMS
                     .replace("{item}", Messages.formatItem(item.getName()))
             );
@@ -113,11 +118,13 @@ public class Sell extends SimpleCommand {
         try {
             price = Double.parseDouble(args[2]);
         } catch (Exception e){
+            player.playErrorSound();
             Messages.send(sender, Messages.ERROR_BAD_PRICE);
             return;
         }
 
         if (price <= 0) {
+            player.playErrorSound();
             Messages.send(sender, Messages.ERROR_BAD_PRICE);
             return;
         }
@@ -125,6 +132,7 @@ public class Sell extends SimpleCommand {
         Stock stock = new Stock(0, item.getName(), getPlayer().getUniqueId().toString(), amount, price);
         Stock dbStock = Virtualshop.db.getDatabase().createStock(stock);
         if(dbStock != null){
+            player.playPostedListing();
             getPlayer().getInventory().removeItem(i);
 
             Messages.broadcast(Messages.STOCK_BROADCAST

@@ -54,9 +54,11 @@ public class Stock extends SimpleCommand {
             setCooldown(3, TimeUnit.SECONDS);
         }
 
+        ShopPlayer p = new ShopPlayer(getPlayer());
         ShopPlayer player;
 
         if(args.length > 2 || args.length < 1) {
+            p.playErrorSound();
             Messages.send(sender, Messages.HELP_STOCK);
             return;
         }
@@ -64,10 +66,12 @@ public class Stock extends SimpleCommand {
         try {
             player = PlayerManager.getPlayer(args[0]);
         } catch (Exception e) {
+            p.playErrorSound();
             player = null;
         }
 
         if(player == null) {
+            p.playErrorSound();
             Messages.send(sender, Messages.ERROR_UNKNOWN_PLAYER.replace("{player}", Messages.formatPlayer(args[0])));
             return;
         }
@@ -75,6 +79,7 @@ public class Stock extends SimpleCommand {
         List<me.emiljimenez21.virtualshop.objects.Stock> stocks = Virtualshop.db.getDatabase().retrieveUserStock(player.uuid.toString());
 
         if(stocks.size() == 0) {
+            p.playErrorSound();
             Messages.send(sender, Messages.STOCK_SELLER_NO_STOCK
                 .replace("{seller}", Messages.formatPlayer(player.name)));
             return;
@@ -84,6 +89,7 @@ public class Stock extends SimpleCommand {
         if(args.length == 2) {
             // Validate that the second argument is a valid number
             if (!Valid.isInteger(args[1])) {
+                p.playErrorSound();
                 Messages.send(sender, Messages.ERROR_BAD_NUMBER);
                 return;
             }
@@ -91,6 +97,7 @@ public class Stock extends SimpleCommand {
             page = Integer.parseInt(args[1]);
 
             if (page < 0) {
+                p.playErrorSound();
                 Messages.send(sender, Messages.ERROR_BAD_NUMBER);
                 return;
             }

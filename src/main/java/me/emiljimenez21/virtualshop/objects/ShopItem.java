@@ -13,11 +13,13 @@ public class ShopItem {
     }
 
     public ShopItem(String item) {
-        try {
-            this.item = Virtualshop.itemDB.getDB().get(item);
-            this.exists = true;
-        } catch (Exception e) {
+        ItemStack itm = Virtualshop.itemDB.getDB().get(item);
+
+        if(itm == null) {
             this.exists = false;
+        } else {
+            this.item = itm;
+            this.exists = true;
         }
     }
 

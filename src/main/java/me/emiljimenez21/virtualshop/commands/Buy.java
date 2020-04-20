@@ -53,8 +53,12 @@ public class Buy extends SimpleCommand {
             setCooldown(3, TimeUnit.SECONDS);
         }
 
+        // Check Available Inventory Space
+        ShopPlayer buyer = new ShopPlayer(getPlayer());
+
         // Blueprint for arguments
         if(args.length < 2 || args.length > 3) {
+            buyer.playErrorSound();
             Messages.send(sender, Messages.HELP_BUY);
             return;
         }
@@ -62,12 +66,14 @@ public class Buy extends SimpleCommand {
         // Validate that the first argument is a valid item
         ShopItem item = new ShopItem(args[0]);
         if(!item.exists){
+            buyer.playErrorSound();
             Messages.send(sender, Messages.ERROR_UNKNOWN_ITEM.replace("{item}", args[0]));
             return;
         }
 
         // Validate that the second argument is a valid number
         if(!Valid.isInteger(args[1])){
+            buyer.playErrorSound();
             Messages.send(sender, Messages.ERROR_BAD_NUMBER);
             return;
         }
@@ -75,6 +81,7 @@ public class Buy extends SimpleCommand {
         int amount = Integer.parseInt(args[1]);
 
         if (amount < 0) {
+            buyer.playErrorSound();
             Messages.send(sender, Messages.ERROR_BAD_NUMBER);
             return;
         }
@@ -85,13 +92,11 @@ public class Buy extends SimpleCommand {
             if(Valid.isDecimal(args[2]) && Double.parseDouble(args[2]) > 0) {
                 price = Double.parseDouble(args[2]);
             } else {
+                buyer.playErrorSound();
                 Messages.send(sender, Messages.ERROR_BAD_PRICE);
                 return;
             }
         }
-
-        // Check Available Inventory Space
-        ShopPlayer buyer = new ShopPlayer(getPlayer());
 
         int available_space = buyer.getAvailableSlots();
         int max_amount = available_space * item.getItem().getMaxStackSize();
@@ -101,6 +106,7 @@ public class Buy extends SimpleCommand {
         }
 
         if(available_space == 0) {
+            buyer.playErrorSound();
             Messages.send(sender, Messages.ERROR_NO_SPACE);
             return;
         }
@@ -142,6 +148,7 @@ public class Buy extends SimpleCommand {
 
             // Check to see if the user can purchase this amount
             if(HookManager.getBalance(getPlayer()) < purchase_price){
+                buyer.playErrorSound();
                 Messages.send(sender, Messages.ERROR_NO_FUNDS);
                 return;
             }
@@ -176,6 +183,7 @@ public class Buy extends SimpleCommand {
 
                 // Tell the seller how much they sold
                 if(stock.seller.player != null){
+                    stock.seller.playProductSold();
                     Messages.send((CommandSender) stock.seller.player, Messages.SALES_SELLER_SALE
                             .replace("{buyer}", Messages.formatPlayer(getPlayer()))
                             .replace("{amount}", Messages.formatAmount(purchase_amount))
@@ -187,10 +195,12 @@ public class Buy extends SimpleCommand {
         }
 
         if(purchased_amount == 0){
+            buyer.playErrorSound();
             Messages.send(sender, Messages.STOCK_NO_STOCK
                     .replace("{item}", Messages.formatItem(item.getName()))
             );
         } else {
+            buyer.playPurchased();
             Messages.send(sender, Messages.SALES_SELF_PURCHASE
                     .replace("{amount}", Messages.formatAmount(purchased_amount))
                     .replace("{item}", Messages.formatItem(item.getName()))

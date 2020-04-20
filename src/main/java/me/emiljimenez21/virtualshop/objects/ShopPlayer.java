@@ -1,6 +1,8 @@
 package me.emiljimenez21.virtualshop.objects;
 
+import me.emiljimenez21.virtualshop.settings.Settings;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -28,6 +30,32 @@ public class ShopPlayer {
         this.uuid = uuid;
         this.name = name;
         loadOnlinePlayer();
+    }
+
+    public void playErrorSound() {
+        if(Settings.sound)
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+    }
+
+    public void playPostedListing() {
+        if(Settings.sound)
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+    }
+
+    public void playCancelledListing() {
+        if(Settings.sound)
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 1, 1);
+    }
+
+    public void playPurchased() {
+        if(Settings.sound)
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
+    }
+
+    public void playProductSold() {
+        if(Settings.sound)
+            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
     }
 
     private void loadOnlinePlayer() {

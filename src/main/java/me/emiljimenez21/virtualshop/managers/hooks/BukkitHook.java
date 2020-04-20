@@ -24,23 +24,24 @@ public class BukkitHook implements ItemDB {
 
     @Override
     public ItemStack get(String name) {
-        ItemStack item = null;
+        ItemStack item;
         try {
             item = new ItemStack(fromName.get(name));
         } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
         return item;
     }
 
     @Override
     public String get(ItemStack item) {
+        String name;
         try {
-            return fromMaterial.get(item.getType());
+            name = fromMaterial.get(item.getType());
         } catch (Exception e) {
-            e.printStackTrace();
+            return null;
         }
-        return null;
+        return name;
     }
 
     @Override

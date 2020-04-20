@@ -9,17 +9,19 @@ public class Settings extends SimpleSettings {
     public static String databasePass;
     public static String databaseName;
     public static String prefix;
+    public static Boolean sound;
     public static Integer databasePort;
     public static String databasePrefix;
 
     @Override
     protected int getConfigVersion() {
-        return 2;
+        return 3;
     }
 
     private static void init() {
         pathPrefix(null);
         prefix = getString("prefix");
+        sound = getBoolean("sound");
 
         pathPrefix("mysql");
         databaseEnabled = getBoolean("enabled");
