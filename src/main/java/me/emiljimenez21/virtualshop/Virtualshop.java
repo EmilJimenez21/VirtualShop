@@ -56,6 +56,12 @@ public class Virtualshop extends SimplePlugin {
     }
 
     @Override
+    protected void onPluginStop() {
+        super.onPluginStop();
+        db.getDatabase().close();
+    }
+
+    @Override
     public List<Class<? extends YamlStaticConfig>> getSettings() {
         return Arrays.asList(Settings.class, Messages.class);
     }

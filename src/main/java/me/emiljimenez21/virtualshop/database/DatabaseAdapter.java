@@ -33,14 +33,14 @@ public abstract class DatabaseAdapter {
     /**
      * Attempts to close the connection, if not null
      */
-    protected final void close() {
+    public final void close() {
         if (connection != null)
             synchronized (connection) {
                 try {
                     connection.close();
 
                 } catch (final SQLException e) {
-                    Common.error(e, "Error closing MySQL connection!");
+                    Common.error(e, "Error closing connection!");
                 }
             }
     }

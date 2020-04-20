@@ -6,7 +6,7 @@
 
     <groupId>me.emiljimenez21</groupId>
     <artifactId>virtualshop</artifactId>
-    <version>1.2</version>
+    <version>1.4</version>
     <packaging>jar</packaging>
 
     <name>VirtualShop</name>

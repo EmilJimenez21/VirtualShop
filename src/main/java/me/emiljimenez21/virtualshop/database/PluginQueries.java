@@ -21,6 +21,7 @@ public class PluginQueries extends DatabaseAdapter {
         transaction_tbl = Settings.databasePrefix + "transactions";
     }
 
+
     public boolean createPlayer(String uuid, String name) {
         PreparedStatement query = null;
         try {
