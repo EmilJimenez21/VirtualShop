@@ -5,6 +5,7 @@ import me.emiljimenez21.virtualshop.objects.ShopPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.mineacademy.fo.Common;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -21,10 +22,11 @@ public class PlayerManager {
         BukkitRunnable job = new BukkitRunnable() {
             @Override
             public void run() {
+                Common.log("Removing offline players from the cache");
                 asyncJob();
             }
         };
-        job.runTaskTimerAsynchronously(Virtualshop.getInstance(), 0,60 * 60 * 20);
+        Virtualshop.jobManager.addAsyncJob(job, 60 * 60);
     }
 
     public static PlayerManager getInstance() {

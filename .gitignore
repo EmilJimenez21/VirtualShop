@@ -4,3 +4,5 @@
 VirtualShop.iml
 
 target/
+
+*.iml
