@@ -54,7 +54,7 @@ public class Cancel extends SimpleCommand {
         // Fetch your stock
         ShopItem item = new ShopItem(args[0]);
         Stock stock = new Stock(0, item.getName(), player.uuid.toString(), 0, 0.00);
-        stock = Virtualshop.db.retrieveStock(stock);
+        stock = Virtualshop.db.getDatabase().retrieveStock(stock);
 
         if(stock == null) {
             Messages.send(sender, Messages.STOCK_CANCEL_NO_STOCK
@@ -74,10 +74,10 @@ public class Cancel extends SimpleCommand {
         item.getItem().setAmount(cancel_amount);
 
         if(stock.quantity == cancel_amount) {
-            Virtualshop.db.deleteStock(stock);
+            Virtualshop.db.getDatabase().deleteStock(stock);
         } else {
             stock.quantity -= cancel_amount;
-            Virtualshop.db.updateStock(stock);
+            Virtualshop.db.getDatabase().updateStock(stock);
         }
 
         // Add the items to the players inventory

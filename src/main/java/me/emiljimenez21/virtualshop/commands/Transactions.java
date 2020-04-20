@@ -39,7 +39,7 @@ public class Transactions extends SimpleCommand {
         }
 
         if(args.length == 2) {
-            List<Transaction> s = Virtualshop.db.retrieveUserTransactions(player.getUniqueId().toString());
+            List<Transaction> s = Virtualshop.db.getDatabase().retrieveUserTransactions(player.getUniqueId().toString());
             for(int i = 1; i <= (s.size()/8) + 1; i++){
                 response.add(String.valueOf(i));
             }
@@ -84,7 +84,7 @@ public class Transactions extends SimpleCommand {
             }
         }
 
-        List<Transaction> transactions = Virtualshop.db.retrieveUserTransactions(player.uuid.toString());
+        List<Transaction> transactions = Virtualshop.db.getDatabase().retrieveUserTransactions(player.uuid.toString());
 
         if(transactions.size() == 0) {
             Messages.send(sender, Messages.SALES_NO_SALES

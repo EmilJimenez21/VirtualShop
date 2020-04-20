@@ -123,7 +123,7 @@ public class Sell extends SimpleCommand {
         }
 
         Stock stock = new Stock(0, item.getName(), getPlayer().getUniqueId().toString(), amount, price);
-        Stock dbStock = Virtualshop.db.createStock(stock);
+        Stock dbStock = Virtualshop.db.getDatabase().createStock(stock);
         if(dbStock != null){
             getPlayer().getInventory().removeItem(i);
 

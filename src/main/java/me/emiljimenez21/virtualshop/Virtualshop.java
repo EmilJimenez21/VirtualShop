@@ -1,10 +1,9 @@
 package me.emiljimenez21.virtualshop;
 
-import com.earth2me.essentials.Essentials;
 import me.emiljimenez21.virtualshop.commands.*;
 import me.emiljimenez21.virtualshop.listeners.PlayerListener;
+import me.emiljimenez21.virtualshop.managers.DatabaseManager;
 import me.emiljimenez21.virtualshop.managers.ItemManager;
-import me.emiljimenez21.virtualshop.managers.MySQLDatabase;
 import me.emiljimenez21.virtualshop.managers.PlayerManager;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import me.emiljimenez21.virtualshop.settings.Settings;
@@ -18,14 +17,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Virtualshop extends SimplePlugin {
-    public static MySQLDatabase db = new MySQLDatabase();
+    public static DatabaseManager db;
     public static ItemManager itemDB = null;
     public static Economy economy = null;
 
     @Override
     protected void onPluginStart() {
         // Initialize the database
-        db.init();
+        db = new DatabaseManager();
 
         // Load our ItemManager
         itemDB = new ItemManager();

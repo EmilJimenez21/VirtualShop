@@ -1,6 +1,6 @@
 package me.emiljimenez21.virtualshop.managers;
 
-import me.emiljimenez21.virtualshop.managers.contracts.ItemDB;
+import me.emiljimenez21.virtualshop.contracts.ItemDB;
 import me.emiljimenez21.virtualshop.managers.hooks.CMIHook;
 import me.emiljimenez21.virtualshop.managers.hooks.EssentialsHook;
 import org.mineacademy.fo.Common;

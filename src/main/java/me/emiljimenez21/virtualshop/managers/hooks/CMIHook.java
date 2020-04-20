@@ -1,7 +1,7 @@
 package me.emiljimenez21.virtualshop.managers.hooks;
 
 import com.Zrips.CMI.CMI;
-import me.emiljimenez21.virtualshop.managers.contracts.ItemDB;
+import me.emiljimenez21.virtualshop.contracts.ItemDB;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;

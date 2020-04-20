@@ -76,7 +76,7 @@ public class Find extends SimpleCommand {
             }
         }
 
-        List<Stock> stocks = Virtualshop.db.retrieveItemStock(item.getName());
+        List<Stock> stocks = Virtualshop.db.getDatabase().retrieveItemStock(item.getName());
 
         if(stocks.size() == 0) {
             Messages.send(sender, Messages.STOCK_NO_STOCK

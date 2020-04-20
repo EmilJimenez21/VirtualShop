@@ -38,7 +38,7 @@ public class Stock extends SimpleCommand {
         }
 
         if(args.length == 2) {
-            List<me.emiljimenez21.virtualshop.objects.Stock> s = Virtualshop.db.retrieveUserStock(player.getUniqueId().toString());
+            List<me.emiljimenez21.virtualshop.objects.Stock> s = Virtualshop.db.getDatabase().retrieveUserStock(player.getUniqueId().toString());
             for(int i = 1; i <= (s.size()/8) + 1; i++){
                 response.add(String.valueOf(i));
             }
@@ -72,7 +72,7 @@ public class Stock extends SimpleCommand {
             return;
         }
 
-        List<me.emiljimenez21.virtualshop.objects.Stock> stocks = Virtualshop.db.retrieveUserStock(player.uuid.toString());
+        List<me.emiljimenez21.virtualshop.objects.Stock> stocks = Virtualshop.db.getDatabase().retrieveUserStock(player.uuid.toString());
 
         if(stocks.size() == 0) {
             Messages.send(sender, Messages.STOCK_SELLER_NO_STOCK

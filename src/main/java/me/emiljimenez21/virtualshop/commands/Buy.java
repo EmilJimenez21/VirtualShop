@@ -106,7 +106,7 @@ public class Buy extends SimpleCommand {
         }
 
         // Retrieve the stocks from the DB
-        List<Stock> stocks = Virtualshop.db.retrieveItemStock(item.getName());
+        List<Stock> stocks = Virtualshop.db.getDatabase().retrieveItemStock(item.getName());
 
         int purchased_amount = 0;
         double total_price = 0;
@@ -153,7 +153,7 @@ public class Buy extends SimpleCommand {
             Transaction tx = new Transaction(stock.item, stock.seller.uuid.toString(), getPlayer().getUniqueId().toString(), purchase_amount, 0, purchase_price);
 
             // Create a transaction record
-            if(Virtualshop.db.createTransaction(tx)){
+            if(Virtualshop.db.getDatabase().createTransaction(tx)){
                 total_price += purchase_price;
                 purchased_amount += purchase_amount;
 
@@ -165,10 +165,10 @@ public class Buy extends SimpleCommand {
 
                 // Update the stock
                 if(stock.quantity == purchase_amount) {
-                    Virtualshop.db.deleteStock(stock);
+                    Virtualshop.db.getDatabase().deleteStock(stock);
                 } else {
                     stock.quantity -= purchase_amount;
-                    Virtualshop.db.updateStock(stock);
+                    Virtualshop.db.getDatabase().updateStock(stock);
                 }
 
                 // Add the items to the buyers inventory
