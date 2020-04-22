@@ -2,6 +2,7 @@ package me.emiljimenez21.virtualshop;
 
 import me.emiljimenez21.virtualshop.commands.*;
 import me.emiljimenez21.virtualshop.jobs.CheckForUpdates;
+import me.emiljimenez21.virtualshop.jobs.HourlyPlayerCachePurge;
 import me.emiljimenez21.virtualshop.listeners.PlayerListener;
 import me.emiljimenez21.virtualshop.managers.DatabaseManager;
 import me.emiljimenez21.virtualshop.managers.ItemManager;
@@ -59,13 +60,20 @@ public class Virtualshop extends SimplePlugin {
         registerCommand(new Cancel("cancel"));
         registerCommand(new Stock("stock"));
 
+        // Check for updates hourly
         jobManager.addAsyncJob(new CheckForUpdates(), 60 * 60);
+
+        // Remove players hourly
+        jobManager.addAsyncJob(new HourlyPlayerCachePurge(), 60 * 60);
     }
 
     @Override
     protected void onPluginStop() {
         super.onPluginStop();
+        // Close the database connection
         db.getDatabase().close();
+        // Cancel all the jobs
+        jobManager.killAllJobs();
     }
 
     @Override

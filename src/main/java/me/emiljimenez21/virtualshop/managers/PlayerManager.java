@@ -1,11 +1,9 @@
 package me.emiljimenez21.virtualshop.managers;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
-import me.emiljimenez21.virtualshop.objects.ShopPlayer;
+import me.emiljimenez21.virtualshop.objects.ShopUser;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.mineacademy.fo.Common;
 
 import java.sql.ResultSet;
 import java.util.HashMap;
@@ -15,19 +13,8 @@ import java.util.UUID;
 
 public class PlayerManager {
     private static volatile PlayerManager instance;
-    private static HashMap<String, ShopPlayer> players = new HashMap<String, ShopPlayer>();
+    private static HashMap<String, ShopUser> players = new HashMap<String, ShopUser>();
     private static HashMap<String, Long> player_expiration = new HashMap<String, Long>();
-
-    public PlayerManager() {
-        BukkitRunnable job = new BukkitRunnable() {
-            @Override
-            public void run() {
-                Common.log("Removing offline players from the cache");
-                asyncJob();
-            }
-        };
-        Virtualshop.jobManager.addAsyncJob(job, 60 * 60);
-    }
 
     public static PlayerManager getInstance() {
         if (instance == null) {
@@ -37,12 +24,12 @@ public class PlayerManager {
         return instance;
     }
 
-    public static ShopPlayer getPlayer(String uuid) {
-        ShopPlayer p = players.get(uuid);
+    public static ShopUser getPlayer(String uuid) {
+        ShopUser p = players.get(uuid);
         if(p == null) {
             ResultSet res = Virtualshop.db.getDatabase().getPlayer(uuid);
             try {
-                p = new ShopPlayer(res.getString("uuid"), res.getString("name"));
+                p = new ShopUser(res.getString("uuid"), res.getString("name"));
             } catch (Exception e) {
                 // Do Nothing
             }
@@ -50,7 +37,7 @@ public class PlayerManager {
         return p;
     }
 
-    public static void addPlayer(String uuid, ShopPlayer player){
+    public static void addPlayer(String uuid, ShopUser player){
         players.put(uuid, player);
         player_expiration.put(uuid, System.currentTimeMillis() + 3600 * 1000);
     }
@@ -61,7 +48,7 @@ public class PlayerManager {
             Virtualshop.db.getDatabase().createPlayer(player.getUniqueId().toString(), player.getName());
         }
 
-        addPlayer(player.getUniqueId().toString(), new ShopPlayer(player));
+        addPlayer(player.getUniqueId().toString(), new ShopUser(player));
     }
 
     public static void removePlayer(String uuid) {
@@ -69,7 +56,7 @@ public class PlayerManager {
         player_expiration.remove(uuid);
     }
 
-    public static HashMap<String, ShopPlayer> getPlayers() {
+    public static HashMap<String, ShopUser> getPlayers() {
         return players;
     }
 

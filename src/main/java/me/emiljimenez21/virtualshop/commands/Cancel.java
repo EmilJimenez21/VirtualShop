@@ -1,19 +1,15 @@
 package me.emiljimenez21.virtualshop.commands;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
-import me.emiljimenez21.virtualshop.managers.PlayerManager;
-import me.emiljimenez21.virtualshop.objects.ShopItem;
-import me.emiljimenez21.virtualshop.objects.ShopPlayer;
 import me.emiljimenez21.virtualshop.objects.Stock;
 import me.emiljimenez21.virtualshop.settings.Messages;
-import org.mineacademy.fo.Valid;
-import org.mineacademy.fo.command.SimpleCommand;
+import org.mineacademy.fo.ChatUtil;
+import org.mineacademy.fo.Common;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class Cancel extends SimpleCommand {
+public class Cancel extends ShopCommand {
 
     public Cancel(String label) {
         super(label);
@@ -34,87 +30,94 @@ public class Cancel extends SimpleCommand {
 
     @Override
     protected void onCommand() {
-        // Implement a cooldown
-        if(!hasPerm("virtualshop.admin")) {
-            setCooldown(3, TimeUnit.SECONDS);
-        }
-
-        ShopPlayer player = PlayerManager.getPlayer(getPlayer().getUniqueId().toString());
+        super.onCommand();
 
         if(args.length > 2 || args.length < 1) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.HELP_CANCEL);
-            return;
-        }
-
-        // Fetch the available inventory space
-        if(player.getAvailableSlots() < 1) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.ERROR_NO_SPACE);
-            return;
-        }
-
-        // Fetch your stock
-        ShopItem item = new ShopItem(args[0]);
-
-        if(item.getItem() == null) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.ERROR_UNKNOWN_ITEM
-                    .replace("{item}", Messages.formatItem(args[0]))
+            user.playErrorSound();
+            Common.tell(sender,Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_CANCEL
+                    .replace("<item>", Messages.formatItem("<item>"))
+                    .replace("[amount]", Messages.formatAmount("[amount]"))
             );
             return;
         }
 
-        Stock stock = new Stock(0, item.getName(), player.uuid.toString(), 0, 0.00);
+        // Fetch the available inventory space
+        if(user.getAvailableSlots() < 1) {
+            user.playErrorSound();
+            Messages.send(sender, Messages.ERROR_NO_SPACE);
+            return;
+        }
+
+        if(!loadItem(0)) {
+            return;
+        }
+
+        Stock stock = new Stock(item,user);
+
         stock = Virtualshop.db.getDatabase().retrieveStock(stock);
 
         if(stock == null) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.STOCK_CANCEL_NO_STOCK
-                .replace("{item}", Messages.formatItem(item.getName()))
+            user.playErrorSound();
+            Messages.send(
+                    sender,
+                    Messages.STOCK_CANCEL_NO_STOCK
+                            .replace(
+                                    "{item}",
+                                    Messages.formatItem(
+                                            item.getName()
+                                    )
+                            )
             );
             return;
         }
 
         // Check to make sure inventory wont overflow
-        int cancel_amount = stock.quantity;
-        if(args.length == 2 && Valid.isInteger(args[1])) {
-            cancel_amount = Integer.valueOf(args[1]);
+        int maximum_space = item.getItem().getMaxStackSize() * user.getAvailableSlots();
+
+        amount = stock.quantity;
+        if(args.length == 2){
+            if(!loadAmount(1)){
+                return;
+            }
         }
 
-        if(cancel_amount < 1) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.ERROR_BAD_NUMBER);
-            return;
+        // Cancel up to the maximum inventory space
+        if(amount > maximum_space) {
+            amount = maximum_space;
         }
 
-        if(cancel_amount > (item.getItem().getMaxStackSize() * player.getAvailableSlots())) {
-            cancel_amount = item.getItem().getMaxStackSize() * player.getAvailableSlots();
-        }
-
-        if(stock.quantity < cancel_amount) {
-            cancel_amount = stock.quantity;
+        // Cancel up to the amount that the stock has
+        if(stock.quantity < amount) {
+            amount = stock.quantity;
         }
 
         // Update the ItemStack and Stock
-        item.getItem().setAmount(cancel_amount);
+        item.getItem().setAmount(amount);
 
-        if(stock.quantity == cancel_amount) {
+        if(stock.quantity == amount) {
             Virtualshop.db.getDatabase().deleteStock(stock);
         } else {
-            stock.quantity -= cancel_amount;
+            stock.quantity -= amount;
             Virtualshop.db.getDatabase().updateStock(stock);
         }
 
-        // Add the items to the players inventory
-        player.inventory.addItem(item.getItem());
+        // Add the items to the users inventory
+        user.inventory.addItem(item.getItem());
 
-        // Notify the player how much they took off the market
-        Messages.send(sender, Messages.STOCK_CANCELLED
-                .replace("{amount}", Messages.formatAmount(cancel_amount))
-                .replace("{item}", Messages.formatItem(item.getName()))
+        // Notify the user how much they took off the market
+        Messages.send(
+                sender,
+                Messages.STOCK_CANCELLED
+                        .replace(
+                                "{amount}",
+                                Messages.formatAmount(amount)
+                        )
+                        .replace(
+                                "{item}",
+                                Messages.formatItem(item.getName())
+                        )
         );
 
-        player.playCancelledListing();
+        user.playCancelledListing();
     }
 }

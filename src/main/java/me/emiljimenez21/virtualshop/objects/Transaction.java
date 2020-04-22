@@ -8,8 +8,8 @@ import java.sql.SQLException;
 public class Transaction {
     public int id;
     public String item;
-    public ShopPlayer seller;
-    public ShopPlayer buyer;
+    public ShopUser seller;
+    public ShopUser buyer;
     public int quantity;
     public double tax;
     public double price;
@@ -37,6 +37,7 @@ public class Transaction {
             tax,
             price
         );
+
     }
 
 

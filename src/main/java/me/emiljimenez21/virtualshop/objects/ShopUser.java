@@ -9,28 +9,54 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
-public class ShopPlayer {
+public class ShopUser {
     public UUID uuid = null;
     public String name = null;
     public Inventory inventory = null;
     public Player player = null;
 
-    public ShopPlayer(String uuid, String name) {
+    /**
+     * Create a shop user by a string UUID and a name
+     *
+     * @param uuid The UUID of a player
+     * @param name The Name of a player
+     */
+    public ShopUser(String uuid, String name) {
         this(UUID.fromString(uuid), name);
     }
 
-    public ShopPlayer(Player player) {
+    /**
+     * Create a shop user using a player
+     *
+     * @param player The player that this user will represent
+     */
+    public ShopUser(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId();
         this.name = player.getName();
         this.inventory = player.getInventory();
     }
 
-    public ShopPlayer(UUID uuid, String name) {
+
+    /**
+     * Create a shop user by a UUID and their Name
+     * @param uuid The UUID of the player
+     * @param name The name of the player associated with the UUID
+     */
+    public ShopUser(UUID uuid, String name) {
         this.uuid = uuid;
         this.name = name;
-        loadOnlinePlayer();
+        this.player = Bukkit.getPlayer(uuid);
+        if (this.player == null) {
+            this.player = Bukkit.getOfflinePlayer(uuid).getPlayer();
+        }
+
+        if(this.player != null) {
+            this.inventory = player.getInventory();
+        }
     }
+
+
 
     public void playErrorSound() {
         if(Settings.sound)
@@ -56,13 +82,6 @@ public class ShopPlayer {
     public void playProductSold() {
         if(Settings.sound)
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-    }
-
-    private void loadOnlinePlayer() {
-        this.player = Bukkit.getPlayer(uuid);
-        if (this.player != null) {
-            this.inventory = player.getInventory();
-        }
     }
 
     public int getAvailableSlots() {

@@ -1,22 +1,17 @@
 package me.emiljimenez21.virtualshop.commands;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
-import me.emiljimenez21.virtualshop.managers.PlayerManager;
-import me.emiljimenez21.virtualshop.objects.ShopPlayer;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.mineacademy.fo.ChatUtil;
 import org.mineacademy.fo.Common;
-import org.mineacademy.fo.Valid;
-import org.mineacademy.fo.command.SimpleCommand;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class Stock extends SimpleCommand {
+public class Stock extends ShopCommand {
 
     public Stock(String label) {
         super(label);
@@ -26,12 +21,12 @@ public class Stock extends SimpleCommand {
 
     @Override
     protected List<String> tabComplete() {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
         OfflinePlayer player = null;
 
         if(args.length == 1) {
-            for(OfflinePlayer p: Bukkit.getOfflinePlayers()){
-                response.add(p.getName());
+            for(OfflinePlayer user: Bukkit.getOfflinePlayers()){
+                response.add(user.getName());
             }
         } else {
             player = Bukkit.getOfflinePlayer(args[0]);
@@ -49,56 +44,32 @@ public class Stock extends SimpleCommand {
 
     @Override
     protected void onCommand() {
-        // Implement a cooldown
-        if(!hasPerm("virtualshop.admin")) {
-            setCooldown(3, TimeUnit.SECONDS);
-        }
-
-        ShopPlayer p = new ShopPlayer(getPlayer());
-        ShopPlayer player;
+        super.onCommand();
 
         if(args.length > 2 || args.length < 1) {
-            p.playErrorSound();
-            Messages.send(sender, Messages.HELP_STOCK);
+            user.playErrorSound();
+            Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_STOCK
+                    .replace("<player>", Messages.formatPlayer("<player>"))
+                    .replace("[page]", Messages.formatAmount("[page]"))
+            );
             return;
         }
 
-        try {
-            player = PlayerManager.getPlayer(args[0]);
-        } catch (Exception e) {
-            p.playErrorSound();
-            player = null;
-        }
-
-        if(player == null) {
-            p.playErrorSound();
-            Messages.send(sender, Messages.ERROR_UNKNOWN_PLAYER.replace("{player}", Messages.formatPlayer(args[0])));
+        if(!loadPlayer(0)) {
             return;
         }
 
         List<me.emiljimenez21.virtualshop.objects.Stock> stocks = Virtualshop.db.getDatabase().retrieveUserStock(player.uuid.toString());
 
         if(stocks.size() == 0) {
-            p.playErrorSound();
+            user.playErrorSound();
             Messages.send(sender, Messages.STOCK_SELLER_NO_STOCK
                 .replace("{seller}", Messages.formatPlayer(player.name)));
             return;
         }
-
-        int page = 1;
+        
         if(args.length == 2) {
-            // Validate that the second argument is a valid number
-            if (!Valid.isInteger(args[1])) {
-                p.playErrorSound();
-                Messages.send(sender, Messages.ERROR_BAD_NUMBER);
-                return;
-            }
-
-            page = Integer.parseInt(args[1]);
-
-            if (page < 0) {
-                p.playErrorSound();
-                Messages.send(sender, Messages.ERROR_BAD_NUMBER);
+            if(!loadPage(1)){
                 return;
             }
         }
@@ -111,6 +82,7 @@ public class Stock extends SimpleCommand {
             start = 0;
             page = 1;
         }
+
 
         Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatPlayer(player.name), '=', ChatColor.DARK_GRAY));
         for(int i = start; i < (start + page_size); i++) {
@@ -127,5 +99,6 @@ public class Stock extends SimpleCommand {
             }
         }
         Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '=', ChatColor.DARK_GRAY));
+
     }
 }

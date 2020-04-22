@@ -1,22 +1,19 @@
 package me.emiljimenez21.virtualshop.commands;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
-import me.emiljimenez21.virtualshop.objects.ShopItem;
-import me.emiljimenez21.virtualshop.objects.ShopPlayer;
 import me.emiljimenez21.virtualshop.objects.Stock;
 import me.emiljimenez21.virtualshop.objects.Transaction;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.mineacademy.fo.Valid;
-import org.mineacademy.fo.command.SimpleCommand;
+import org.mineacademy.fo.ChatUtil;
+import org.mineacademy.fo.Common;
 import org.mineacademy.fo.model.HookManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class Buy extends SimpleCommand {
+public class Buy extends ShopCommand {
 
     public Buy(String label) {
         super(label);
@@ -45,60 +42,36 @@ public class Buy extends SimpleCommand {
         return completeLastWord(response);
     }
 
-    // /buy <item> <amount> [price]
     @Override
     protected void onCommand() {
-        // Implement a cooldown
-        if(!hasPerm("virtualshop.admin")) {
-            setCooldown(3, TimeUnit.SECONDS);
-        }
+       super.onCommand();
 
-        // Check Available Inventory Space
-        ShopPlayer buyer = new ShopPlayer(getPlayer());
-
-        // Blueprint for arguments
         if(args.length < 2 || args.length > 3) {
-            buyer.playErrorSound();
-            Messages.send(sender, Messages.HELP_BUY);
+            user.playErrorSound();
+            Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_BUY
+                    .replace("<item>", Messages.formatItem("<item>"))
+                    .replace("<amount>", Messages.formatAmount("<amount>"))
+                    .replace("[price]", Messages.formatPrice("[price]"))
+            );
             return;
         }
 
-        // Validate that the first argument is a valid item
-        ShopItem item = new ShopItem(args[0]);
-        if(!item.exists){
-            buyer.playErrorSound();
-            Messages.send(sender, Messages.ERROR_UNKNOWN_ITEM.replace("{item}", args[0]));
+        if(!loadItem(0)){
             return;
         }
 
-        // Validate that the second argument is a valid number
-        if(!Valid.isInteger(args[1])){
-            buyer.playErrorSound();
-            Messages.send(sender, Messages.ERROR_BAD_NUMBER);
+        if(!loadAmount(1)){
             return;
         }
 
-        int amount = Integer.parseInt(args[1]);
-
-        if (amount < 0) {
-            buyer.playErrorSound();
-            Messages.send(sender, Messages.ERROR_BAD_NUMBER);
-            return;
-        }
-
-        // Validate if the third argument is set and a valid double
-        double price = -1;
+        price = null;
         if(args.length == 3){
-            if(Valid.isDecimal(args[2]) && Double.parseDouble(args[2]) > 0) {
-                price = Double.parseDouble(args[2]);
-            } else {
-                buyer.playErrorSound();
-                Messages.send(sender, Messages.ERROR_BAD_PRICE);
+            if(!loadPrice(2)){
                 return;
             }
         }
 
-        int available_space = buyer.getAvailableSlots();
+        int available_space = user.getAvailableSlots();
         int max_amount = available_space * item.getItem().getMaxStackSize();
 
         if(max_amount < amount) {
@@ -106,7 +79,7 @@ public class Buy extends SimpleCommand {
         }
 
         if(available_space == 0) {
-            buyer.playErrorSound();
+            user.playErrorSound();
             Messages.send(sender, Messages.ERROR_NO_SPACE);
             return;
         }
@@ -131,7 +104,7 @@ public class Buy extends SimpleCommand {
             }
 
             // Stop buying if it's too expensive
-            if(stock.price > price && price != -1) {
+            if(stock.price > price && price != null) {
                 break;
             }
 
@@ -148,7 +121,7 @@ public class Buy extends SimpleCommand {
 
             // Check to see if the user can purchase this amount
             if(HookManager.getBalance(getPlayer()) < purchase_price){
-                buyer.playErrorSound();
+                user.playErrorSound();
                 Messages.send(sender, Messages.ERROR_NO_FUNDS);
                 return;
             }
@@ -157,14 +130,21 @@ public class Buy extends SimpleCommand {
             item.getItem().setAmount(purchase_amount);
 
             // Create the transaction
-            Transaction tx = new Transaction(stock.item, stock.seller.uuid.toString(), getPlayer().getUniqueId().toString(), purchase_amount, 0, purchase_price);
+            Transaction tx = new Transaction(
+                    stock.item,
+                    stock.seller.uuid.toString(),
+                    user.uuid.toString(),
+                    purchase_amount,
+                    0,
+                    stock.price
+            );
 
             // Create a transaction record
             if(Virtualshop.db.getDatabase().createTransaction(tx)){
                 total_price += purchase_price;
                 purchased_amount += purchase_amount;
 
-                // Take the money from the buyer
+                // Take the money from the user
                 Virtualshop.economy.withdrawPlayer(getPlayer(), purchase_price);
 
                 // Give the money to the seller
@@ -178,14 +158,14 @@ public class Buy extends SimpleCommand {
                     Virtualshop.db.getDatabase().updateStock(stock);
                 }
 
-                // Add the items to the buyers inventory
+                // Add the items to the users inventory
                 getPlayer().getInventory().addItem(item.getItem());
 
                 // Tell the seller how much they sold
                 if(stock.seller.player != null){
                     stock.seller.playProductSold();
                     Messages.send((CommandSender) stock.seller.player, Messages.SALES_SELLER_SALE
-                            .replace("{buyer}", Messages.formatPlayer(getPlayer()))
+                            .replace("{user}", Messages.formatPlayer(getPlayer()))
                             .replace("{amount}", Messages.formatAmount(purchase_amount))
                             .replace("{item}", Messages.formatItem(item.getName()))
                             .replace("{price}", Messages.formatPrice(purchase_price))
@@ -195,12 +175,12 @@ public class Buy extends SimpleCommand {
         }
 
         if(purchased_amount == 0){
-            buyer.playErrorSound();
+            user.playErrorSound();
             Messages.send(sender, Messages.STOCK_NO_STOCK
                     .replace("{item}", Messages.formatItem(item.getName()))
             );
         } else {
-            buyer.playPurchased();
+            user.playPurchased();
             Messages.send(sender, Messages.SALES_SELF_PURCHASE
                     .replace("{amount}", Messages.formatAmount(purchased_amount))
                     .replace("{item}", Messages.formatItem(item.getName()))

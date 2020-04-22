@@ -1,9 +1,9 @@
 package me.emiljimenez21.virtualshop.managers;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
-import me.emiljimenez21.virtualshop.database.MySQLDatabase;
+import me.emiljimenez21.virtualshop.database.types.MySQLDatabase;
 import me.emiljimenez21.virtualshop.database.PluginQueries;
-import me.emiljimenez21.virtualshop.database.SQLiteDatabase;
+import me.emiljimenez21.virtualshop.database.types.SQLiteDatabase;
 import me.emiljimenez21.virtualshop.settings.Settings;
 import org.bukkit.Bukkit;
 import org.mineacademy.fo.Common;

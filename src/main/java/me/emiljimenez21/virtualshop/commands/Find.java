@@ -1,22 +1,17 @@
 package me.emiljimenez21.virtualshop.commands;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
-import me.emiljimenez21.virtualshop.objects.ShopItem;
-import me.emiljimenez21.virtualshop.objects.ShopPlayer;
 import me.emiljimenez21.virtualshop.objects.Stock;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.ChatColor;
 import org.mineacademy.fo.ChatUtil;
 import org.mineacademy.fo.Common;
-import org.mineacademy.fo.Valid;
-import org.mineacademy.fo.command.SimpleCommand;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
-public class Find extends SimpleCommand {
+public class Find extends ShopCommand {
 
     public Find(String label) {
         super(label);
@@ -26,7 +21,7 @@ public class Find extends SimpleCommand {
 
     @Override
     protected List<String> tabComplete() {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
 
         if(args.length == 1) {
             response.addAll(Virtualshop.itemDB.getDB().listNames());
@@ -41,44 +36,24 @@ public class Find extends SimpleCommand {
 
     @Override
     protected void onCommand() {
-        // Implement a cooldown
-        if(!hasPerm("virtualshop.admin")) {
-            setCooldown(3, TimeUnit.SECONDS);
-        }
-
-        ShopPlayer player = new ShopPlayer(getPlayer());
+        super.onCommand();
 
         // Blueprint for arguments
         if(args.length < 1 || args.length > 2) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.HELP_FIND);
-            return;
-        }
-
-        // Validate that the first argument is a valid item
-        ShopItem item = new ShopItem(args[0]);
-        if(!item.exists){
-            player.playErrorSound();
-            Messages.send(sender, Messages.ERROR_UNKNOWN_ITEM
-                    .replace("{item}", Messages.formatItem(args[0]))
+            user.playErrorSound();
+            Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_FIND
+                    .replace("<item>", Messages.formatItem("<item>"))
+                    .replace("[page]", Messages.formatAmount("[page]"))
             );
             return;
         }
 
-        int page = 1;
+        if(!loadItem(0)){
+            return;
+        }
+
         if(args.length == 2) {
-            // Validate that the second argument is a valid number
-            if (!Valid.isInteger(args[1])) {
-                player.playErrorSound();
-                Messages.send(sender, Messages.ERROR_BAD_NUMBER);
-                return;
-            }
-
-            page = Integer.parseInt(args[1]);
-
-            if (page < 0) {
-                player.playErrorSound();
-                Messages.send(sender, Messages.ERROR_BAD_NUMBER);
+            if(!loadPage(1)){
                 return;
             }
         }
@@ -86,7 +61,7 @@ public class Find extends SimpleCommand {
         List<Stock> stocks = Virtualshop.db.getDatabase().retrieveItemStock(item.getName());
 
         if(stocks.size() == 0) {
-            player.playErrorSound();
+            user.playErrorSound();
             Messages.send(sender, Messages.STOCK_NO_STOCK
                 .replace("{item}", Messages.formatItem(item.getName())));
             return;

@@ -1,20 +1,19 @@
 package me.emiljimenez21.virtualshop.commands;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
-import me.emiljimenez21.virtualshop.managers.PlayerManager;
 import me.emiljimenez21.virtualshop.objects.ShopItem;
-import me.emiljimenez21.virtualshop.objects.ShopPlayer;
 import me.emiljimenez21.virtualshop.objects.Stock;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.mineacademy.fo.command.SimpleCommand;
+import org.mineacademy.fo.ChatUtil;
+import org.mineacademy.fo.Common;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class Sell extends SimpleCommand {
+
+public class Sell extends ShopCommand {
 
     public Sell(String label) {
         super(label);
@@ -24,7 +23,7 @@ public class Sell extends SimpleCommand {
 
     @Override
     protected List<String> tabComplete() {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
 
         if(args.length == 1) {
             response.add("<amount>");
@@ -46,35 +45,29 @@ public class Sell extends SimpleCommand {
 
     @Override
     protected void onCommand() {
-        // Implement a cooldown
-        if(!hasPerm("virtualshop.admin")) {
-            setCooldown(3, TimeUnit.SECONDS);
-        }
-
-        ShopPlayer player = PlayerManager.getPlayer(getPlayer().getUniqueId().toString());
-        ShopItem item;
-        ItemStack i;
-        int amount;
-        double price;
+        super.onCommand();
 
         if(args.length != 3) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.HELP_SELL);
+            user.playErrorSound();
+            Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_SELL
+                    .replace("<item>", Messages.formatItem("<item>"))
+                    .replace("<amount>", Messages.formatAmount("<amount>"))
+                    .replace("<price>", Messages.formatPrice("<price>"))
+            );
             return;
         }
 
         if(args[1].equalsIgnoreCase("hand") || args[1].equalsIgnoreCase("held")){
             ItemStack hand = getPlayer().getInventory().getItemInMainHand();
-            // Have to recreate the item because the getItemInMainHand() function is buggy
-            item = new ShopItem(ShopItem.getName(hand));
+            item = new ShopItem(Virtualshop.itemDB.getDB().get(hand));
         } else {
-            item = new ShopItem(args[1]);
+            if(!loadItem(1)){
+                return;
+            }
         }
 
-        i = item.getItem();
-
-        if(i.isSimilar(new ItemStack(Material.AIR))){
-            player.playErrorSound();
+        if(item.getItem().isSimilar(new ItemStack(Material.AIR))){
+            user.playErrorSound();
             Messages.send(sender, Messages.ERROR_FORBIDDEN_SALE
                     .replace("{item}", Messages.formatItem(item.getName()))
             );
@@ -82,64 +75,73 @@ public class Sell extends SimpleCommand {
         }
 
         if(item.isModified()) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.ERROR_MODIFIED_ITEM);
+            user.playErrorSound();
+            Messages.send(
+                    sender,
+                    Messages.ERROR_MODIFIED_ITEM
+            );
             return;
         }
 
-        int available = player.getQuantity(i);
-
-        if(args[0].equalsIgnoreCase("all")) {
-            amount = available;
+        if(args[0].equalsIgnoreCase("all")){
+            amount = user.getQuantity(item.getItem());
         } else {
-            amount = Integer.parseInt(args[0]) > 0 ? Integer.parseInt(args[0]) : 0;
+            if(!loadAmount(0)){
+                return;
+            }
         }
+
+        int available = user.getQuantity(item.getItem());
 
         if(amount > available){
             amount = available;
         }
 
-        if(amount < 0) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.ERROR_BAD_NUMBER);
-            return;
-        }
-
-        i.setAmount(amount);
+        item.getItem().setAmount(amount);
 
         if(amount == 0) {
-            player.playErrorSound();
+            user.playErrorSound();
             Messages.send(sender, Messages.ERROR_NO_ITEMS
                     .replace("{item}", Messages.formatItem(item.getName()))
             );
             return;
         }
 
-        try {
-            price = Double.parseDouble(args[2]);
-        } catch (Exception e){
-            player.playErrorSound();
-            Messages.send(sender, Messages.ERROR_BAD_PRICE);
+        if(!loadPrice(2)){
             return;
         }
 
-        if (price <= 0) {
-            player.playErrorSound();
-            Messages.send(sender, Messages.ERROR_BAD_PRICE);
-            return;
-        }
+        Stock stock = new Stock(
+                0,
+                item.getName(),
+                user.uuid.toString(),
+                amount,
+                price
+        );
 
-        Stock stock = new Stock(0, item.getName(), getPlayer().getUniqueId().toString(), amount, price);
         Stock dbStock = Virtualshop.db.getDatabase().createStock(stock);
+
         if(dbStock != null){
-            player.playPostedListing();
-            getPlayer().getInventory().removeItem(i);
+            user.playPostedListing();
+            user.inventory.removeItem(item.getItem());
 
             Messages.broadcast(Messages.STOCK_BROADCAST
-                    .replace("{seller}", Messages.formatPlayer(getPlayer()))
-                    .replace("{amount}", Messages.formatAmount(dbStock.quantity))
-                    .replace("{item}", Messages.formatItem(item.getName()))
-                    .replace("{price}", Messages.formatPrice(dbStock.price))
+                    .replace(
+                            "{seller}",
+                            Messages.formatPlayer(getPlayer())
+                    )
+                    .replace(
+                            "{amount}",
+                            Messages.formatAmount(dbStock.quantity)
+                    )
+                    .replace(
+                            "{item}",
+                            Messages.formatItem(item.getName())
+                    )
+                    .replace(
+                            "{price}",
+                            Messages.formatPrice(dbStock.price)
+                    )
             );
         }
     }

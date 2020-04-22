@@ -1,6 +1,7 @@
-package me.emiljimenez21.virtualshop.database;
+package me.emiljimenez21.virtualshop.database.types;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
+import me.emiljimenez21.virtualshop.database.PluginQueries;
 import org.bukkit.Bukkit;
 
 import java.sql.Connection;

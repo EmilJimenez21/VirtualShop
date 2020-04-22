@@ -11,6 +11,14 @@ public class JobManager {
 
     public void addAsyncJob(BukkitRunnable job, int seconds) {
         job.runTaskTimerAsynchronously(Virtualshop.getInstance(), 0, seconds * 20);
+        jobs.add(job);
+    }
+
+    public void killAllJobs() {
+        for (BukkitRunnable job : jobs) {
+            job.cancel();
+        }
+        jobs = new ArrayList<>();
     }
 
 }

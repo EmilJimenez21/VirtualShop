@@ -4,11 +4,10 @@ import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.ChatColor;
 import org.mineacademy.fo.ChatUtil;
 import org.mineacademy.fo.Common;
-import org.mineacademy.fo.command.SimpleCommand;
 
-import java.util.concurrent.TimeUnit;
 
-public class Help extends SimpleCommand {
+
+public class Help extends ShopCommand {
     public Help(String label) {
         super(label);
         setDescription("Command reference for the VirtualShop");
@@ -16,10 +15,7 @@ public class Help extends SimpleCommand {
 
     @Override
     protected void onCommand() {
-        // Implement a cooldown
-        if(!hasPerm("virtualshop.admin")) {
-            setCooldown(3, TimeUnit.SECONDS);
-        }
+        super.onCommand();
 
         Common.tell(sender, ChatUtil.center( ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "VirtualShop", '=', ChatColor.DARK_GRAY));
 

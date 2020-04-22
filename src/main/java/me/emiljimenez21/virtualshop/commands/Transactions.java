@@ -1,8 +1,6 @@
 package me.emiljimenez21.virtualshop.commands;
 
 import me.emiljimenez21.virtualshop.Virtualshop;
-import me.emiljimenez21.virtualshop.managers.PlayerManager;
-import me.emiljimenez21.virtualshop.objects.ShopPlayer;
 import me.emiljimenez21.virtualshop.objects.Transaction;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.Bukkit;
@@ -10,14 +8,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.mineacademy.fo.ChatUtil;
 import org.mineacademy.fo.Common;
-import org.mineacademy.fo.Valid;
-import org.mineacademy.fo.command.SimpleCommand;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class Transactions extends SimpleCommand {
+public class Transactions extends ShopCommand {
 
     public Transactions(String label) {
         super(label);
@@ -27,12 +22,12 @@ public class Transactions extends SimpleCommand {
 
     @Override
     protected List<String> tabComplete() {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
         OfflinePlayer player = null;
 
         if(args.length == 1) {
-            for(OfflinePlayer p: Bukkit.getOfflinePlayers()){
-                response.add(p.getName());
+            for(OfflinePlayer user: Bukkit.getOfflinePlayers()){
+                response.add(user.getName());
             }
         } else {
             player = Bukkit.getOfflinePlayer(args[0]);
@@ -50,42 +45,24 @@ public class Transactions extends SimpleCommand {
 
     @Override
     protected void onCommand() {
-        // Implement a cooldown
-        if(!hasPerm("virtualshop.admin")) {
-            setCooldown(3, TimeUnit.SECONDS);
-        }
-
-        ShopPlayer p = new ShopPlayer(getPlayer());
-        ShopPlayer player;
+        super.onCommand();
 
         if(args.length < 1 || args.length > 2) {
-            p.playErrorSound();
-            Messages.send(sender, Messages.HELP_SALES);
-            return;
-        }
-
-        player = PlayerManager.getPlayer(args[0]);
-
-        if(player == null) {
-            p.playErrorSound();
-            Messages.send(sender, Messages.ERROR_UNKNOWN_PLAYER
-                    .replace("{player}", Messages.formatPlayer(args[0]))
+            user.playErrorSound();
+            Common.tell(sender,Messages.BASE_COLOR + "Command Usage: " + "Command Usage: " + Messages.HELP_SALES
+                    .replace("<player>", Messages.formatPlayer("<player>"))
+                    .replace("[page]", Messages.formatAmount("[page]"))
             );
             return;
         }
 
-        int page = 1;
-        if(args.length == 2) {
-            if (!Valid.isInteger(args[1])) {
-                p.playErrorSound();
-                Messages.send(sender, Messages.ERROR_BAD_NUMBER);
-                return;
-            }
-            page = Integer.parseInt(args[1]);
+        if(!loadPlayer(0)){
+            return;
+        }
 
-            if (page < 0) {
-                p.playErrorSound();
-                Messages.send(sender, Messages.ERROR_BAD_NUMBER);
+
+        if(args.length == 2) {
+            if(!loadPage(1)){
                 return;
             }
         }
@@ -93,7 +70,7 @@ public class Transactions extends SimpleCommand {
         List<Transaction> transactions = Virtualshop.db.getDatabase().retrieveUserTransactions(player.uuid.toString());
 
         if(transactions.size() == 0) {
-            p.playErrorSound();
+            user.playErrorSound();
             Messages.send(sender, Messages.SALES_NO_SALES
                     .replace("{seller}", Messages.formatPlayer(player.name))
             );
