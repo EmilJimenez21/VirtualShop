@@ -16,13 +16,13 @@ public abstract class DatabaseAdapter {
     // Connecting
     // --------------------------------------------------------------------
 
-    public void reconnect() {}
+    public abstract void reconnect();
 
     /**
      * Attempts to connect using last known credentials. Fails gracefully if those are not provided
      * i.e. connect function was never called
      */
-    private final void connectUsingLastCredentials() {
+    private void connectUsingLastCredentials() {
         reconnect();
     }
 

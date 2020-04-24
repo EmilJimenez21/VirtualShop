@@ -206,4 +206,9 @@ public class PluginQueries extends DatabaseAdapter {
         }
         return transactions;
     }
+
+    @Override
+    public void reconnect() {
+        // Do nothing
+    }
 }

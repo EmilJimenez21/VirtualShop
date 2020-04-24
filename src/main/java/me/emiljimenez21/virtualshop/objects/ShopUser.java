@@ -60,28 +60,48 @@ public class ShopUser {
 
     public void playErrorSound() {
         if(Settings.sound)
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+            try {
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 1, 1);
+            } catch (Exception e){
+                // Do Nothing
+            }
     }
 
     public void playPostedListing() {
         if(Settings.sound)
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+            try {
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_BELL, 1, 1);
+            } catch (Exception e){
+                // Do Nothing
+            }
     }
 
     public void playCancelledListing() {
         if(Settings.sound)
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 1, 1);
+            try {
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HARP, 1, 1);
+            } catch (Exception e){
+                // Do Nothing
+            }
     }
 
     public void playPurchased() {
         if(Settings.sound)
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
+            try {
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1, 1);
+            } catch (Exception e){
+                // Do Nothing
+            }
     }
 
     public void playProductSold() {
         if(Settings.sound)
-            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+            try {
+                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+            } catch (Exception e){
+                // Do Nothing
+            }
     }
 
     public int getAvailableSlots() {

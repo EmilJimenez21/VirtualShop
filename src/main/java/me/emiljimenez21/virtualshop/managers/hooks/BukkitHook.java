@@ -16,9 +16,9 @@ public class BukkitHook implements ItemDB {
 
     public BukkitHook() {
         for(Material m : Material.values()) {
-            fromMaterial.put(m, m.getKey().toString().replace("minecraft:", ""));
-            fromName.put(m.getKey().toString().replace("minecraft:", ""), m);
-            listNames.add(m.getKey().toString().replace("minecraft:", ""));
+            fromMaterial.put(m, m.toString().toLowerCase());
+            fromName.put(m.toString().toLowerCase(), m);
+            listNames.add(m.toString().toLowerCase());
         }
     }
 

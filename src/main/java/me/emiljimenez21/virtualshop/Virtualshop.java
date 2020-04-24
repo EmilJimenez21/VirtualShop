@@ -29,6 +29,8 @@ public class Virtualshop extends SimplePlugin {
 
     @Override
     protected void onPluginStart() {
+        new Metrics(this, 7227);
+
         // Initialize the managers
         db = new DatabaseManager();
         itemDB = new ItemManager();
@@ -72,8 +74,6 @@ public class Virtualshop extends SimplePlugin {
         super.onPluginStop();
         // Close the database connection
         db.getDatabase().close();
-        // Cancel all the jobs
-        jobManager.killAllJobs();
     }
 
     @Override
