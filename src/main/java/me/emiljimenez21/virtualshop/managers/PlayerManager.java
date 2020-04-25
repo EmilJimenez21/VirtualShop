@@ -61,14 +61,18 @@ public class PlayerManager {
     }
 
     public void asyncJob() {
-        for(Map.Entry<String, Long> player_expires : player_expiration.entrySet()) {
-            // Check to see if the player is online
-            if(Bukkit.getPlayer(UUID.fromString(player_expires.getKey())) == null) {
-                player_expiration.remove(player_expires.getKey());
-                player_expiration.put(player_expires.getKey(), System.currentTimeMillis() + 3600 * 1000);
-                continue;
+        try {
+            for (Map.Entry<String, Long> player_expires : player_expiration.entrySet()) {
+                // Check to see if the player is online
+                if (Bukkit.getPlayer(UUID.fromString(player_expires.getKey())) == null) {
+                    player_expiration.remove(player_expires.getKey());
+                    player_expiration.put(player_expires.getKey(), System.currentTimeMillis() + 3600 * 1000);
+                    continue;
+                }
+                removePlayer(player_expires.getKey());
             }
-            removePlayer(player_expires.getKey());
+        } catch (Exception e) {
+            // There were no entries to purge so we gucci!
         }
     }
 

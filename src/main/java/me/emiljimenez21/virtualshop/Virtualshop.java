@@ -13,6 +13,8 @@ import me.emiljimenez21.virtualshop.settings.Settings;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.mineacademy.fo.Common;
 import org.mineacademy.fo.plugin.SimplePlugin;
 import org.mineacademy.fo.settings.YamlStaticConfig;
 import org.mineacademy.fo.update.SpigotUpdater;
@@ -39,11 +41,24 @@ public class Virtualshop extends SimplePlugin {
 
         // Disable Plugin if no applicable itemDB Plugins exist
         if(itemDB.getDB() == null) {
-            Bukkit.getPluginManager().disablePlugin(this);
+            Common.logFramed(true, "Error Occurred when initializing the item database! Please let the plugin author know!");
+            return;
+        }
+
+        // Check for vault
+        if(getServer().getPluginManager().getPlugin("Vault") == null){
+            Common.logFramed(true, "You are required to have vault installed to use this plugin!");
+            return;
         }
 
         // Hook into the economy
-        economy = Bukkit.getServicesManager().getRegistration(Economy.class).getProvider();
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if(rsp == null) {
+            Common.logFramed(true, "Issue finding the Vault Service Provider! Do you have an economy plugin installed?");
+            return;
+        }
+
+        economy = rsp.getProvider();
 
         // Load all online players into the cache
         for(Player p: Bukkit.getOnlinePlayers()){

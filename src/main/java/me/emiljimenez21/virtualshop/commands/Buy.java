@@ -165,7 +165,7 @@ public class Buy extends ShopCommand {
                 if(stock.seller.player != null){
                     stock.seller.playProductSold();
                     Messages.send((CommandSender) stock.seller.player, Messages.SALES_SELLER_SALE
-                            .replace("{user}", Messages.formatPlayer(getPlayer()))
+                            .replace("{buyer}", Messages.formatPlayer(getPlayer()))
                             .replace("{amount}", Messages.formatAmount(purchase_amount))
                             .replace("{item}", Messages.formatItem(item.getName()))
                             .replace("{price}", Messages.formatPrice(purchase_price))
