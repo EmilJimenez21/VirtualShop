@@ -13,7 +13,7 @@ public class ShopItem {
     }
 
     public ShopItem(String item) {
-        ItemStack itm = Virtualshop.itemDB.getDB().get(item);
+        ItemStack itm = Virtualshop.getItems().get(item);
 
         if(itm == null) {
             this.exists = false;
@@ -28,11 +28,11 @@ public class ShopItem {
     }
 
     public String getName() {
-        return Virtualshop.itemDB.getDB().get(this.item);
+        return Virtualshop.getItems().get(this.item);
     }
 
     public static String getName(ItemStack item) {
-        return Virtualshop.itemDB.getDB().get(item);
+        return Virtualshop.getItems().get(item);
     }
 
     public boolean isModified(){

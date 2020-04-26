@@ -14,12 +14,12 @@ public class Messages extends SimpleLocalization {
 
     public static String HELP_BUY, HELP_SELL, HELP_STOCK, HELP_SALES, HELP_CANCEL, HELP_FIND;
     public static String SALES_SALE, SALES_SELF_PURCHASE, SALES_SELLER_SALE, SALES_NO_SALES, SALES_SELF_NO_SALES;
-    public static String STOCK_BROADCAST, STOCK_LISTING, STOCK_CANCELLED, STOCK_REMOVED, STOCK_NO_STOCK, STOCK_SELLER_NO_STOCK, STOCK_SELF_NO_STOCK, STOCK_CANCEL_NO_STOCK;
+    public static String STOCK_BROADCAST, STOCK_LISTING, STOCK_CANCELLED, STOCK_REMOVED, STOCK_NO_STOCK, STOCK_SELLER_NO_STOCK, STOCK_SELF_NO_STOCK, STOCK_CANCEL_NO_STOCK, STOCK_SELLER_LOWEST_PRICE;
     public static String ERROR_NO_RESULTS, ERROR_FORBIDDEN_SALE, ERROR_MODIFIED_ITEM, ERROR_UNKNOWN_ITEM, ERROR_UNKNOWN_PLAYER, ERROR_BAD_NUMBER, ERROR_BAD_PRICE, ERROR_BAD_ITEM, ERROR_NO_FUNDS, ERROR_NO_ITEMS, ERROR_NO_SPACE;
 
     @Override
     protected int getConfigVersion() {
-        return 5;
+        return 6;
     }
 
     public static void send(CommandSender sender, String message) {
@@ -84,6 +84,7 @@ public class Messages extends SimpleLocalization {
         STOCK_CANCELLED = getString("cancelled");
         STOCK_REMOVED = getString("removed");
         STOCK_NO_STOCK = getString("no-stock");
+        STOCK_SELLER_LOWEST_PRICE = getString("seller-lowest-price");
         STOCK_SELLER_NO_STOCK = getString("seller-no-stock");
         STOCK_SELF_NO_STOCK = getString("self-no-stock");
         STOCK_CANCEL_NO_STOCK =getString("cancel-no-stock");

@@ -6,7 +6,6 @@ import me.emiljimenez21.virtualshop.objects.Transaction;
 import me.emiljimenez21.virtualshop.settings.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.mineacademy.fo.ChatUtil;
 import org.mineacademy.fo.Common;
 import org.mineacademy.fo.model.HookManager;
 
@@ -23,10 +22,10 @@ public class Buy extends ShopCommand {
 
     @Override
     protected List<String> tabComplete() {
-        List<String> response = new ArrayList<String>();
+        List<String> response = new ArrayList<>();
 
         if(args.length == 1) {
-            response.addAll(Virtualshop.itemDB.getDB().listNames());
+            response.addAll(Virtualshop.getItems().listNames());
             response.add("held");
             response.add("hand");
         }
@@ -85,7 +84,7 @@ public class Buy extends ShopCommand {
         }
 
         // Retrieve the stocks from the DB
-        List<Stock> stocks = Virtualshop.db.getDatabase().retrieveItemStock(item.getName());
+        List<Stock> stocks = Virtualshop.getDatabase().retrieveItemStock(item.getName());
 
         int purchased_amount = 0;
         double total_price = 0;
@@ -100,6 +99,15 @@ public class Buy extends ShopCommand {
 
             // Stop buying if I am the seller
             if(stock.seller.uuid.equals(getPlayer().getUniqueId())){
+                // Notify the player they are the cheapest on the market
+                Messages.send(
+                        getPlayer(),
+                        Messages.STOCK_SELLER_LOWEST_PRICE
+                                .replace(
+                                        "{item}",
+                                        Messages.formatItem(item.getName())
+                                )
+                );
                 break;
             }
 
@@ -140,22 +148,22 @@ public class Buy extends ShopCommand {
             );
 
             // Create a transaction record
-            if(Virtualshop.db.getDatabase().createTransaction(tx)){
+            if(Virtualshop.getDatabase().createTransaction(tx)){
                 total_price += purchase_price;
                 purchased_amount += purchase_amount;
 
                 // Take the money from the user
-                Virtualshop.economy.withdrawPlayer(getPlayer(), purchase_price);
+                Virtualshop.getEconomy().withdrawPlayer(getPlayer(), purchase_price);
 
                 // Give the money to the seller
-                Virtualshop.economy.depositPlayer(Bukkit.getOfflinePlayer(stock.seller.uuid), purchase_price);
+                Virtualshop.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(stock.seller.uuid), purchase_price);
 
                 // Update the stock
                 if(stock.quantity == purchase_amount) {
-                    Virtualshop.db.getDatabase().deleteStock(stock);
+                    Virtualshop.getDatabase().deleteStock(stock);
                 } else {
                     stock.quantity -= purchase_amount;
-                    Virtualshop.db.getDatabase().updateStock(stock);
+                    Virtualshop.getDatabase().updateStock(stock);
                 }
 
                 // Add the items to the users inventory
@@ -164,11 +172,12 @@ public class Buy extends ShopCommand {
                 // Tell the seller how much they sold
                 if(stock.seller.player != null){
                     stock.seller.playProductSold();
-                    Messages.send((CommandSender) stock.seller.player, Messages.SALES_SELLER_SALE
-                            .replace("{buyer}", Messages.formatPlayer(getPlayer()))
-                            .replace("{amount}", Messages.formatAmount(purchase_amount))
-                            .replace("{item}", Messages.formatItem(item.getName()))
-                            .replace("{price}", Messages.formatPrice(purchase_price))
+                    Messages.send((CommandSender) stock.seller.player,
+                            Messages.SALES_SELLER_SALE
+                                    .replace("{buyer}", Messages.formatPlayer(getPlayer()))
+                                    .replace("{amount}", Messages.formatAmount(purchase_amount))
+                                    .replace("{item}", Messages.formatItem(item.getName()))
+                                    .replace("{price}", Messages.formatPrice(purchase_price))
                     );
                 }
             }

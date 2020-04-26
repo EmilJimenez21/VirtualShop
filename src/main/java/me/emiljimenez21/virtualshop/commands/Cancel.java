@@ -22,7 +22,7 @@ public class Cancel extends ShopCommand {
         List<String> response = new ArrayList<String>();
 
         if(args.length == 1) {
-            response.addAll(Virtualshop.itemDB.getDB().listNames());
+            response.addAll(Virtualshop.getItems().listNames());
         }
 
         return completeLastWord(response);
@@ -54,7 +54,7 @@ public class Cancel extends ShopCommand {
 
         Stock stock = new Stock(item,user);
 
-        stock = Virtualshop.db.getDatabase().retrieveStock(stock);
+        stock = Virtualshop.getDatabase().retrieveStock(stock);
 
         if(stock == null) {
             user.playErrorSound();
@@ -95,10 +95,10 @@ public class Cancel extends ShopCommand {
         item.getItem().setAmount(amount);
 
         if(stock.quantity == amount) {
-            Virtualshop.db.getDatabase().deleteStock(stock);
+            Virtualshop.getDatabase().deleteStock(stock);
         } else {
             stock.quantity -= amount;
-            Virtualshop.db.getDatabase().updateStock(stock);
+            Virtualshop.getDatabase().updateStock(stock);
         }
 
         // Add the items to the users inventory

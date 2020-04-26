@@ -34,7 +34,7 @@ public class Transactions extends ShopCommand {
         }
 
         if(args.length == 2) {
-            List<Transaction> s = Virtualshop.db.getDatabase().retrieveUserTransactions(player.getUniqueId().toString());
+            List<Transaction> s = Virtualshop.getDatabase().retrieveUserTransactions(player.getUniqueId().toString());
             for(int i = 1; i <= (s.size()/8) + 1; i++){
                 response.add(String.valueOf(i));
             }
@@ -67,7 +67,7 @@ public class Transactions extends ShopCommand {
             }
         }
 
-        List<Transaction> transactions = Virtualshop.db.getDatabase().retrieveUserTransactions(player.uuid.toString());
+        List<Transaction> transactions = Virtualshop.getDatabase().retrieveUserTransactions(player.uuid.toString());
 
         if(transactions.size() == 0) {
             user.playErrorSound();

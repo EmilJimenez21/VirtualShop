@@ -24,7 +24,7 @@ public class Find extends ShopCommand {
         List<String> response = new ArrayList<>();
 
         if(args.length == 1) {
-            response.addAll(Virtualshop.itemDB.getDB().listNames());
+            response.addAll(Virtualshop.getItems().listNames());
         }
 
         if(args.length == 2) {
@@ -58,7 +58,7 @@ public class Find extends ShopCommand {
             }
         }
 
-        List<Stock> stocks = Virtualshop.db.getDatabase().retrieveItemStock(item.getName());
+        List<Stock> stocks = Virtualshop.getDatabase().retrieveItemStock(item.getName());
 
         if(stocks.size() == 0) {
             user.playErrorSound();

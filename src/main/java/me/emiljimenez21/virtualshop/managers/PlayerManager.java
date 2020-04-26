@@ -27,7 +27,7 @@ public class PlayerManager {
     public static ShopUser getPlayer(String uuid) {
         ShopUser p = players.get(uuid);
         if(p == null) {
-            ResultSet res = Virtualshop.db.getDatabase().getPlayer(uuid);
+            ResultSet res = Virtualshop.getDatabase().getPlayer(uuid);
             try {
                 p = new ShopUser(res.getString("uuid"), res.getString("name"));
             } catch (Exception e) {
@@ -43,9 +43,9 @@ public class PlayerManager {
     }
 
     public static void addPlayer(Player player) {
-        ResultSet res = Virtualshop.db.getDatabase().getPlayer(player.getName());
+        ResultSet res = Virtualshop.getDatabase().getPlayer(player.getName());
         if(res == null) {
-            Virtualshop.db.getDatabase().createPlayer(player.getUniqueId().toString(), player.getName());
+            Virtualshop.getDatabase().createPlayer(player.getUniqueId().toString(), player.getName());
         }
 
         addPlayer(player.getUniqueId().toString(), new ShopUser(player));

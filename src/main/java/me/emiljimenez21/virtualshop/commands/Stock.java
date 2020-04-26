@@ -33,7 +33,7 @@ public class Stock extends ShopCommand {
         }
 
         if(args.length == 2) {
-            List<me.emiljimenez21.virtualshop.objects.Stock> s = Virtualshop.db.getDatabase().retrieveUserStock(player.getUniqueId().toString());
+            List<me.emiljimenez21.virtualshop.objects.Stock> s = Virtualshop.getDatabase().retrieveUserStock(player.getUniqueId().toString());
             for(int i = 1; i <= (s.size()/8) + 1; i++){
                 response.add(String.valueOf(i));
             }
@@ -59,7 +59,7 @@ public class Stock extends ShopCommand {
             return;
         }
 
-        List<me.emiljimenez21.virtualshop.objects.Stock> stocks = Virtualshop.db.getDatabase().retrieveUserStock(player.uuid.toString());
+        List<me.emiljimenez21.virtualshop.objects.Stock> stocks = Virtualshop.getDatabase().retrieveUserStock(player.uuid.toString());
 
         if(stocks.size() == 0) {
             user.playErrorSound();

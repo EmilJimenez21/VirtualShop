@@ -31,7 +31,7 @@ public class Sell extends ShopCommand {
         }
 
         if(args.length == 2) {
-            response.addAll(Virtualshop.itemDB.getDB().listNames());
+            response.addAll(Virtualshop.getItems().listNames());
             response.add("held");
             response.add("hand");
         }
@@ -59,7 +59,7 @@ public class Sell extends ShopCommand {
 
         if(args[1].equalsIgnoreCase("hand") || args[1].equalsIgnoreCase("held")){
             ItemStack hand = getPlayer().getInventory().getItemInMainHand();
-            item = new ShopItem(Virtualshop.itemDB.getDB().get(hand));
+            item = new ShopItem(Virtualshop.getItems().get(hand));
         } else {
             if(!loadItem(1)){
                 return;
@@ -119,7 +119,7 @@ public class Sell extends ShopCommand {
                 price
         );
 
-        Stock dbStock = Virtualshop.db.getDatabase().createStock(stock);
+        Stock dbStock = Virtualshop.getDatabase().createStock(stock);
 
         if(dbStock != null){
             user.playPostedListing();

@@ -1,4 +1,4 @@
-Version: 5
+Version: 6
 messages:
   help:
     buy: "/buy <item> <amount> [price]"
@@ -19,6 +19,7 @@ messages:
     cancelled: "You removed {amount} {item} from the shop"
     removed: "Removed {amount} {item}"
     no-stock: "No one is selling {item}"
+    seller-lowest-price: "You are currently selling the cheapest {item}"
     seller-no-stock: "{seller} doesn't have any items for sale"
     self-no-stock: "You don't have any items for sale"
     cancel-no-stock: "You currently aren't selling any {item}"

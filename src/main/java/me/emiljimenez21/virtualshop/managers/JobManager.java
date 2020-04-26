@@ -3,22 +3,14 @@ package me.emiljimenez21.virtualshop.managers;
 import me.emiljimenez21.virtualshop.Virtualshop;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class JobManager {
-    private List<BukkitRunnable> jobs = new ArrayList<>();
 
-    public void addAsyncJob(BukkitRunnable job, int seconds) {
-        job.runTaskTimerAsynchronously(Virtualshop.getInstance(), 0, seconds * 20);
-        jobs.add(job);
+    public void runAsyncRepetitiveJob(BukkitRunnable job, int delay, int period) {
+        job.runTaskTimerAsynchronously(Virtualshop.getInstance(), delay * 20, period * 20);
     }
 
-    public void killAllJobs() {
-        for (BukkitRunnable job : jobs) {
-            job.cancel();
-        }
-        jobs = new ArrayList<>();
+    public void runAsyncJob(BukkitRunnable job) {
+        job.runTaskAsynchronously(Virtualshop.getInstance());
     }
 
 }
