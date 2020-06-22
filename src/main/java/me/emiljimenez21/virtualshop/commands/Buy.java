@@ -63,7 +63,6 @@ public class Buy extends ShopCommand {
             return;
         }
 
-        price = null;
         if(args.length == 3){
             if(!loadPrice(2)){
                 return;
@@ -112,8 +111,10 @@ public class Buy extends ShopCommand {
             }
 
             // Stop buying if it's too expensive
-            if(stock.price > price && price != null) {
-                break;
+            if(price != null){
+                if(stock.price > price) {
+                    break;
+                }
             }
 
             int remaining_amount = amount - purchased_amount;

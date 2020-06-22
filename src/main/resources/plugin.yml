@@ -2,5 +2,26 @@ name: Virtualshop
 version: ${project.version}
 main: me.emiljimenez21.virtualshop.Virtualshop
 api-version: 1.13
-depend:
-  - Vault
+depend: [Vault]
+commands:
+  buy:
+    description: Buy goods for sale on the VirtualShop.
+    usage: /buy <item> <amount> [price]
+  sell:
+    description: Put goods up for sale on the VirtualShop.
+    usage: /sell <amount:all> <item:hand> <price>
+  cancel:
+    description: Removes items from VirtualShop.
+    usage: /cancel <item>
+  find:
+    description: Find offers for an item.
+    usage: /find <item>
+  stock:
+    description: List items for sale by player.
+    usage: /stock [player] [page]
+  transactions:
+    description: See sales that have been made.
+    usage: /transactions [player] [page]
+  shop:
+    description: VirtualShop command reference
+    usage: /shop
