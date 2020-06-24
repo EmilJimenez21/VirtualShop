@@ -16,7 +16,7 @@ public class Stock extends ShopCommand {
     public Stock(String label) {
         super(label);
         setPermission("virtualshop.stock");
-        setDescription("Retrieve the stock of an item on the VirtualShop");
+        setDescription("View your stock on the VirtualShop");
     }
 
     @Override
@@ -24,18 +24,28 @@ public class Stock extends ShopCommand {
         List<String> response = new ArrayList<>();
         OfflinePlayer player = null;
 
-        if(args.length == 1) {
-            for(OfflinePlayer user: Bukkit.getOfflinePlayers()){
-                response.add(user.getName());
+        if(sender.hasPermission("virtualshop.stock.others")) {
+            if (args.length == 1) {
+                for (OfflinePlayer user : Bukkit.getOfflinePlayers()) {
+                    response.add(user.getName());
+                }
+            } else {
+                player = Bukkit.getOfflinePlayer(args[0]);
+            }
+
+            if (args.length == 2) {
+                List<me.emiljimenez21.virtualshop.objects.Stock> s = Virtualshop.getDatabase().retrieveUserStock(player.getUniqueId().toString());
+                for (int i = 1; i <= (s.size() / 8) + 1; i++) {
+                    response.add(String.valueOf(i));
+                }
             }
         } else {
-            player = Bukkit.getOfflinePlayer(args[0]);
-        }
-
-        if(args.length == 2) {
-            List<me.emiljimenez21.virtualshop.objects.Stock> s = Virtualshop.getDatabase().retrieveUserStock(player.getUniqueId().toString());
-            for(int i = 1; i <= (s.size()/8) + 1; i++){
-                response.add(String.valueOf(i));
+            if (args.length == 1) {
+                player = Bukkit.getOfflinePlayer(sender.getName());
+                List<me.emiljimenez21.virtualshop.objects.Stock> s = Virtualshop.getDatabase().retrieveUserStock(player.getUniqueId().toString());
+                for (int i = 1; i <= (s.size() / 8) + 1; i++) {
+                    response.add(String.valueOf(i));
+                }
             }
         }
 
@@ -46,17 +56,44 @@ public class Stock extends ShopCommand {
     protected void onCommand() {
         super.onCommand();
 
-        if(args.length > 2 || args.length < 1) {
-            user.playErrorSound();
-            Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_STOCK
-                    .replace("<player>", Messages.formatPlayer("<player>"))
-                    .replace("[page]", Messages.formatAmount("[page]"))
-            );
-            return;
-        }
+        Virtualshop.getAnalytics().incrementStock();
 
-        if(!loadPlayer(0)) {
-            return;
+        if(sender.hasPermission("virtualshop.stock.others")) {
+            if (args.length > 2 || args.length < 1) {
+                user.playErrorSound();
+                Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_STOCK
+                        .replace("<player>", Messages.formatPlayer("<player>"))
+                        .replace("[page]", Messages.formatAmount("[page]"))
+                );
+                return;
+            }
+
+            if (!loadPlayer(0)) {
+                return;
+            }
+
+            if(args.length == 2) {
+                if(!loadPage(1)){
+                    return;
+                }
+            }
+        } else {
+            if(args.length > 1){
+                user.playErrorSound();
+                Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_STOCK
+                        .replace("<player> ", "")
+                        .replace("[page]", Messages.formatAmount("[page]"))
+                );
+                return;
+            }
+            // Set the player to the current user
+            player = user;
+
+            if(args.length == 1) {
+                if(!loadPage(0)){
+                    return;
+                }
+            }
         }
 
         List<me.emiljimenez21.virtualshop.objects.Stock> stocks = Virtualshop.getDatabase().retrieveUserStock(player.uuid.toString());
@@ -67,12 +104,6 @@ public class Stock extends ShopCommand {
                 .replace("{seller}", Messages.formatPlayer(player.name)));
             return;
         }
-        
-        if(args.length == 2) {
-            if(!loadPage(1)){
-                return;
-            }
-        }
 
         int page_size = 8;
         int start = (page - 1) * page_size;
@@ -82,7 +113,6 @@ public class Stock extends ShopCommand {
             start = 0;
             page = 1;
         }
-
 
         Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatPlayer(player.name), '=', ChatColor.DARK_GRAY));
         for(int i = start; i < (start + page_size); i++) {

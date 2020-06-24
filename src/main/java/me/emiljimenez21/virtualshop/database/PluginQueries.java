@@ -1,13 +1,8 @@
 package me.emiljimenez21.virtualshop.database;
 
-import me.emiljimenez21.virtualshop.Virtualshop;
 import me.emiljimenez21.virtualshop.objects.Stock;
 import me.emiljimenez21.virtualshop.objects.Transaction;
-import me.emiljimenez21.virtualshop.settings.Messages;
 import me.emiljimenez21.virtualshop.settings.Settings;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -61,6 +56,22 @@ public class PluginQueries extends DatabaseAdapter {
      * Stock Queries
      *
      */
+
+    public List<Stock> getBestPrices() {
+        List<Stock> stocks = new ArrayList<>();
+        PreparedStatement query = null;
+        ResultSet result = null;
+        try {
+            query = this.prepareStatement("SELECT b.* FROM (SELECT item, min(price) as price FROM " + stock_tbl + " GROUP BY item) a JOIN " + stock_tbl + " b ON a.item = b.item AND a.price = b.price ");
+            result = query.executeQuery();
+            while (result.next()) {
+                stocks.add(new Stock(result));
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return stocks;
+    }
 
     public List<Stock> retrieveItemStock(String item) {
         List<Stock> stocks = new ArrayList<Stock>();

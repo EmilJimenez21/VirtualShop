@@ -37,7 +37,7 @@ public class Find extends ShopCommand {
     @Override
     protected void onCommand() {
         super.onCommand();
-
+        Virtualshop.getAnalytics().incrementFind();
         // Blueprint for arguments
         if(args.length < 1 || args.length > 2) {
             user.playErrorSound();

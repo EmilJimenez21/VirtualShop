@@ -3,11 +3,9 @@ package me.emiljimenez21.virtualshop;
 import me.emiljimenez21.virtualshop.commands.*;
 import me.emiljimenez21.virtualshop.contracts.ItemDB;
 import me.emiljimenez21.virtualshop.database.PluginQueries;
-import me.emiljimenez21.virtualshop.jobs.CheckForUpdates;
-import me.emiljimenez21.virtualshop.jobs.HourlyPlayerCachePurge;
-import me.emiljimenez21.virtualshop.jobs.ReportMetrics;
-import me.emiljimenez21.virtualshop.jobs.SyncOnlinePlayers;
+import me.emiljimenez21.virtualshop.jobs.*;
 import me.emiljimenez21.virtualshop.listeners.PlayerListener;
+import me.emiljimenez21.virtualshop.managers.AnalyticsManager;
 import me.emiljimenez21.virtualshop.managers.DatabaseManager;
 import me.emiljimenez21.virtualshop.managers.ItemManager;
 import me.emiljimenez21.virtualshop.managers.JobManager;
@@ -24,6 +22,7 @@ import java.util.List;
 
 public class Virtualshop extends SimplePlugin {
     private static Reporting report;
+    private static AnalyticsManager analyticsManager;
     private static DatabaseManager db;
     private static ItemManager itemDB = null;
     private static JobManager jobManager = null;
@@ -33,6 +32,7 @@ public class Virtualshop extends SimplePlugin {
     @Override
     protected void onPluginStart() {
         jobManager = new JobManager();
+        analyticsManager = new AnalyticsManager(this);
         report = new Reporting(this);
         report.sendServerData();
         itemDB = new ItemManager();
@@ -102,6 +102,9 @@ public class Virtualshop extends SimplePlugin {
 
         // Send plugin stats every 30 mins
         jobManager.runAsyncRepetitiveJob(new ReportMetrics(), 1800, 1800);
+
+        // Send command usage to the plugin developer hourly
+        jobManager.runAsyncRepetitiveJob(new SendAnalytics(), 3600, 3600);
     }
 
     @Override
@@ -132,4 +135,6 @@ public class Virtualshop extends SimplePlugin {
     }
 
     public static Reporting getReport() { return report; }
+
+    public static AnalyticsManager getAnalytics() { return  analyticsManager; }
 }

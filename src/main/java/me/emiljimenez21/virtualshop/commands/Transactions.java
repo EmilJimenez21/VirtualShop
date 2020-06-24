@@ -16,7 +16,7 @@ public class Transactions extends ShopCommand {
 
     public Transactions(String label) {
         super(label);
-        setPermission("virtualshop.transactions");
+        setPermission("virtualshop.sales");
         setDescription("Retrieve sales and purchases on the VirtualShop");
     }
 
@@ -25,18 +25,28 @@ public class Transactions extends ShopCommand {
         List<String> response = new ArrayList<>();
         OfflinePlayer player = null;
 
-        if(args.length == 1) {
-            for(OfflinePlayer user: Bukkit.getOfflinePlayers()){
-                response.add(user.getName());
+        if(sender.hasPermission("virtualshop.sales.others")) {
+            if (args.length == 1) {
+                for (OfflinePlayer user : Bukkit.getOfflinePlayers()) {
+                    response.add(user.getName());
+                }
+            } else {
+                player = Bukkit.getOfflinePlayer(args[0]);
+            }
+
+            if (args.length == 2) {
+                List<Transaction> s = Virtualshop.getDatabase().retrieveUserTransactions(player.getUniqueId().toString());
+                for (int i = 1; i <= (s.size() / 8) + 1; i++) {
+                    response.add(String.valueOf(i));
+                }
             }
         } else {
-            player = Bukkit.getOfflinePlayer(args[0]);
-        }
-
-        if(args.length == 2) {
-            List<Transaction> s = Virtualshop.getDatabase().retrieveUserTransactions(player.getUniqueId().toString());
-            for(int i = 1; i <= (s.size()/8) + 1; i++){
-                response.add(String.valueOf(i));
+            if (args.length == 1) {
+                player = Bukkit.getOfflinePlayer(sender.getName());
+                List<Transaction> s = Virtualshop.getDatabase().retrieveUserTransactions(player.getUniqueId().toString());
+                for (int i = 1; i <= (s.size() / 8) + 1; i++) {
+                    response.add(String.valueOf(i));
+                }
             }
         }
 
@@ -46,24 +56,43 @@ public class Transactions extends ShopCommand {
     @Override
     protected void onCommand() {
         super.onCommand();
+        Virtualshop.getAnalytics().incrementSales();
 
-        if(args.length < 1 || args.length > 2) {
-            user.playErrorSound();
-            Common.tell(sender,Messages.BASE_COLOR + "Command Usage: " + "Command Usage: " + Messages.HELP_SALES
-                    .replace("<player>", Messages.formatPlayer("<player>"))
-                    .replace("[page]", Messages.formatAmount("[page]"))
-            );
-            return;
-        }
-
-        if(!loadPlayer(0)){
-            return;
-        }
-
-
-        if(args.length == 2) {
-            if(!loadPage(1)){
+        if(sender.hasPermission("virtualshop.sales.others")) {
+            if (args.length < 1 || args.length > 2) {
+                user.playErrorSound();
+                Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + "Command Usage: " + Messages.HELP_SALES
+                        .replace("<player>", Messages.formatPlayer("<player>"))
+                        .replace("[page]", Messages.formatAmount("[page]"))
+                );
                 return;
+            }
+
+            if (!loadPlayer(0)) {
+                return;
+            }
+
+            if (args.length == 2) {
+                if (!loadPage(1)) {
+                    return;
+                }
+            }
+        } else {
+            if (args.length > 1) {
+                user.playErrorSound();
+                Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + "Command Usage: " + Messages.HELP_SALES
+                        .replace("<player> ", "")
+                        .replace("[page]", Messages.formatAmount("[page]"))
+                );
+                return;
+            }
+
+            player = user;
+
+            if (args.length == 1) {
+                if (!loadPage(0)) {
+                    return;
+                }
             }
         }
 

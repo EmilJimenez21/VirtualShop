@@ -46,6 +46,7 @@ public class Sell extends ShopCommand {
     @Override
     protected void onCommand() {
         super.onCommand();
+        Virtualshop.getAnalytics().incrementSell();
 
         if(args.length != 3) {
             user.playErrorSound();

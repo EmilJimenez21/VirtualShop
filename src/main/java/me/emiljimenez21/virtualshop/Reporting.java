@@ -47,6 +47,23 @@ public class Reporting {
         }
     }
 
+    public void sendCommangUsage(JsonObject data) {
+        data.addProperty("serverUUID", Settings.serverUUID);
+
+        try {
+            new Thread(() -> {
+                try {
+                    // Send the data
+                    sendData("plugin_command_usage", data);
+                } catch (final Exception e) {
+                    // Do Nothing
+                }
+            }).start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void sendServerData() {
         final JsonArray pluginData = new JsonArray();
         int playerAmount;

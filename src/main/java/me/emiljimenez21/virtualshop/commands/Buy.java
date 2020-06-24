@@ -43,7 +43,8 @@ public class Buy extends ShopCommand {
 
     @Override
     protected void onCommand() {
-       super.onCommand();
+        super.onCommand();
+        Virtualshop.getAnalytics().incrementBuy();
 
         if(args.length < 2 || args.length > 3) {
             user.playErrorSound();
@@ -55,14 +56,12 @@ public class Buy extends ShopCommand {
             return;
         }
 
-        if(!loadItem(0)){
+        // Die if can't load the item or the amount
+        if(!loadItem(0) || !loadAmount(1)){
             return;
         }
 
-        if(!loadAmount(1)){
-            return;
-        }
-
+        // If the price is set then load the price or die
         if(args.length == 3){
             if(!loadPrice(2)){
                 return;

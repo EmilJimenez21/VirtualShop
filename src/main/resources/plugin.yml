@@ -6,21 +6,42 @@ commands:
   buy:
     description: Buy goods for sale on the VirtualShop.
     usage: /buy <item> <amount> [price]
+    permission: virtualshop.buy
   sell:
     description: Put goods up for sale on the VirtualShop.
     usage: /sell <amount:all> <item:hand> <price>
+    permission: virtualshop.sell
   cancel:
     description: Removes items from VirtualShop.
     usage: /cancel <item>
+    permission: virtualshop.cancel
   find:
     description: Find offers for an item.
     usage: /find <item>
+    permission: virtualshop.find
   stock:
-    description: List items for sale by player.
-    usage: /stock [player] [page]
+    description: List the items you have for sale.
+    usage: /stock [page]
+    permission: virtualshop.stock
   sales:
     description: See sales that have been made.
-    usage: /sales [player] [page]
+    usage: /sales [page]
+    permission: virtualshop.sales
   shop:
     description: VirtualShop command reference
     usage: /shop
+permissions:
+  virtualshop.user:
+      default: true
+      children:
+          virtualshop.buy: true
+          virtualshop.sell: true
+          virtualshop.cancel: true
+          virtualshop.find: true
+          virtualshop.stock: true
+          virtualshop.sales: true
+  virtualshop.admin:
+      default: op
+      children:
+          virtualshop.stock.others: true
+          virtualshop.sales.others: true

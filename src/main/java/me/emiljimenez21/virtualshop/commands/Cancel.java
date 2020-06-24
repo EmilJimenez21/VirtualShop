@@ -3,7 +3,6 @@ package me.emiljimenez21.virtualshop.commands;
 import me.emiljimenez21.virtualshop.Virtualshop;
 import me.emiljimenez21.virtualshop.objects.Stock;
 import me.emiljimenez21.virtualshop.settings.Messages;
-import org.mineacademy.fo.ChatUtil;
 import org.mineacademy.fo.Common;
 
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ public class Cancel extends ShopCommand {
     @Override
     protected void onCommand() {
         super.onCommand();
+        Virtualshop.getAnalytics().incrementCancel();
 
         if(args.length > 2 || args.length < 1) {
             user.playErrorSound();

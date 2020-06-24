@@ -65,7 +65,7 @@ public abstract class ShopCommand extends SimpleCommand {
 
     protected boolean loadPage(Integer ARG_PAGE) {
                 try {
-            page = Integer.parseInt(args[1]);
+            page = Integer.parseInt(args[ARG_PAGE]);
             if (page < 0) {
                 throw new Exception("The page number must be greater than 0");
             }
