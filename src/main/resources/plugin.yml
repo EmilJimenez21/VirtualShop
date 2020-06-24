@@ -2,7 +2,6 @@ name: Virtualshop
 version: ${project.version}
 main: me.emiljimenez21.virtualshop.Virtualshop
 api-version: 1.13
-depend: [Vault]
 commands:
   buy:
     description: Buy goods for sale on the VirtualShop.
@@ -19,9 +18,9 @@ commands:
   stock:
     description: List items for sale by player.
     usage: /stock [player] [page]
-  transactions:
+  sales:
     description: See sales that have been made.
-    usage: /transactions [player] [page]
+    usage: /sales [player] [page]
   shop:
     description: VirtualShop command reference
     usage: /shop

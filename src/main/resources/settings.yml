@@ -1,7 +1,8 @@
-Version: 2
+Version: 4
 Locale: "en"
 prefix: "&8(&9&lShop&8) "
-sound: true
+sound: true # Enabling this features plays sounds when a player uses the shop
+report_errors_to_dev: true # Enabling this feature will report errors to the developer
 mysql:
   enabled: false
   host: "localhost"
