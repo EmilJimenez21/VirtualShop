@@ -1,0 +1,37 @@
+Version: 6
+messages:
+  help:
+    buy: "/buy <アイテム> <量> [価格]"
+    sell: "/sell <量> <アイテム> <価格>"
+    stock: "/stock <プレイヤー> [ページ]"
+    sales: "/sales <プレイヤー> [ページ]"
+    cancel: "/cancel <アイテム> [量]"
+    find: "/find <アイテム> [ページ]"
+  sales:
+    sale: "{seller} が {amount} {item} を {price} で {buyer} に売却しました"
+    self-purchase: "{price} で {amount} {item} を購入しました"
+    seller-sale: "{buyer} が {price} で {amount} {item} を購入しました"
+    no-sales: "{seller} は売上を上げていません"
+    self-no-sales: "売上はありません"
+  stock:
+    broadcast: "{seller} が {price} で {amount} {item} を販売しました"
+    listing: "{seller}: {price} で {amount} {item}"
+    cancelled: "ショップから {amount} {item} を削除しました"
+    removed: "{amount} {item} を削除"
+    no-stock: "{item} を販売している人はいません"
+    seller-lowest-price: "現在最も安く{item} を販売しています"
+    seller-no-stock: "{seller} はアイテムを販売していません"
+    self-no-stock: "販売中のアイテムがありません"
+    cancel-no-stock: "現在 {item} を販売していません"
+  error:
+    no-results: "検索結果はありません"
+    forbidden-item: "{item} は販売できません"
+    modified-item: "ダメージを受けている、名前が変更されている、エンチャントされているアイテムは販売できません"
+    unknown-item: "{item} とは何ですか？"
+    unknown-player: "プレイヤー {player} が見つかりません"
+    bad-number: "0より大きい数を入力する必要があります"
+    bad-price: "価格は$0.01より大きい必要があります"
+    bad-item: "アイテムを指定する必要があります"
+    no-funds: "お金が足りません"
+    no-items: "{item} を持っていません"
+    no-space: "空き容量がありません"
