@@ -95,7 +95,7 @@ public class Virtualshop extends SimplePlugin {
         jobManager.runAsyncJob(new SyncOnlinePlayers());
 
         // Check for updates hourly
-        jobManager.runAsyncRepetitiveJob(new CheckForUpdates(), 0,3600);
+       // jobManager.runAsyncRepetitiveJob(new CheckForUpdates(), 0,3600);
 
         // Remove players hourly
         jobManager.runAsyncRepetitiveJob(new HourlyPlayerCachePurge(), 3600, 3600);

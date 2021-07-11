@@ -20,7 +20,7 @@ public class Help extends ShopCommand {
         super.onCommand();
         Virtualshop.getAnalytics().incrementShop();
 
-        Common.tell(sender, ChatUtil.center( ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "VirtualShop", '=', ChatColor.DARK_GRAY));
+        Common.tell(sender, ChatUtil.center( ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "VirtualShop", '='));
 
         if(sender.hasPermission("virtualshop.find")) {
             Common.tell(sender, ChatUtil.center(Messages.BASE_COLOR + Messages.HELP_FIND
