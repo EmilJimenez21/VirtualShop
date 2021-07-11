@@ -4,11 +4,11 @@ import me.emiljimenez21.virtualshop.managers.PlayerManager;
 import me.emiljimenez21.virtualshop.objects.ShopItem;
 import me.emiljimenez21.virtualshop.objects.ShopUser;
 import me.emiljimenez21.virtualshop.settings.Messages;
-import org.mineacademy.fo.command.SimpleCommand;
+import org.mineacademy.fo.command.SimpleSubCommand;
 
 import java.util.concurrent.TimeUnit;
 
-public abstract class ShopCommand extends SimpleCommand {
+public abstract class ShopCommand extends  SimpleSubCommand  {
     protected ShopUser user;
     protected ShopItem item = null;
     protected Integer amount = null;

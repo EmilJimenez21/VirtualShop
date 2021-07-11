@@ -115,7 +115,7 @@ public class Transactions extends ShopCommand {
             page = 1;
         }
 
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "TRANSACTIONS " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatPlayer(player.name), '=', ChatColor.DARK_GRAY));
+        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "TRANSACTIONS " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatPlayer(player.name), '='));
         for(int i = start; i < (start + page_size); i++) {
             try {
                 String seller = transactions.get(i).seller.name.equalsIgnoreCase(sender.getName()) ? "I" : transactions.get(i).seller.name;
@@ -132,7 +132,7 @@ public class Transactions extends ShopCommand {
                 break;
             }
         }
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '=', ChatColor.DARK_GRAY));
+        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '='));
 
     }
 }

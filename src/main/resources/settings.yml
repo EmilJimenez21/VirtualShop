@@ -11,3 +11,5 @@ mysql:
   pass: "password"
   name: "minecraft"
   prefix: "shop_"
+
+Command_Aliases: [virturalshop, vs]
