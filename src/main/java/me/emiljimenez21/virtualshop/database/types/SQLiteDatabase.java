@@ -11,8 +11,9 @@ public class SQLiteDatabase extends PluginQueries {
 
     public SQLiteDatabase() {
         try {
+             Class.forName("org.sqlite.JDBC");
             this.connection = DriverManager.getConnection("jdbc:sqlite:" + Virtualshop.getInstance().getDataFolder() +  "/shop.db");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         init();

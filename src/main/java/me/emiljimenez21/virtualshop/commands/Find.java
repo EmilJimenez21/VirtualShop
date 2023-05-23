@@ -76,7 +76,7 @@ public class Find extends ShopCommand {
             page = 1;
         }
 
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatItem(item.getName().toUpperCase() + ChatColor.DARK_GRAY), '=', ChatColor.DARK_GRAY));
+        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatItem(item.getName().toUpperCase() + ChatColor.DARK_GRAY), '='));
         for(int i = start; i < (start + page_size); i++) {
             try {
                 Common.tell(sender, ChatUtil.center(Messages.STOCK_LISTING
@@ -90,6 +90,6 @@ public class Find extends ShopCommand {
                 break;
             }
         }
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '=', ChatColor.DARK_GRAY));
+        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '='));
     }
 }

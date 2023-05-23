@@ -19,6 +19,7 @@ import org.mineacademy.fo.settings.YamlStaticConfig;
 
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
 
 public class Virtualshop extends SimplePlugin {
     private static Reporting report;
@@ -28,7 +29,8 @@ public class Virtualshop extends SimplePlugin {
     private static JobManager jobManager = null;
     private static Economy economy = null;
     private static Updater updater = null;
-
+	@Getter
+	private final VirtualshopCommandGroup mainCommand = new VirtualshopCommandGroup();
     @Override
     protected void onPluginStart() {
         jobManager = new JobManager();
@@ -82,20 +84,20 @@ public class Virtualshop extends SimplePlugin {
         // Register Event Listeners
         registerEvents(new PlayerListener());
 
-        // Register commands
-        registerCommand(new Help("shop"));
-        registerCommand(new Sell("sell"));
-        registerCommand(new Buy( "buy"));
-        registerCommand(new Find("find"));
-        registerCommand(new Transactions("sales"));
-        registerCommand(new Cancel("cancel"));
-        registerCommand(new Stock("stock"));
-
+        // // Register commands
+        // registerCommand(new Help("shop"));
+        // registerCommand(new Sell("sell"));
+        // registerCommand(new Buy( "buy"));
+        // registerCommand(new Find("find"));
+        // registerCommand(new Transactions("sales"));
+        // registerCommand(new Cancel("cancel"));
+        // registerCommand(new Stock("stock"));
+  
         // Async player load
         jobManager.runAsyncJob(new SyncOnlinePlayers());
 
         // Check for updates hourly
-        jobManager.runAsyncRepetitiveJob(new CheckForUpdates(), 0,3600);
+       // jobManager.runAsyncRepetitiveJob(new CheckForUpdates(), 0,3600);
 
         // Remove players hourly
         jobManager.runAsyncRepetitiveJob(new HourlyPlayerCachePurge(), 3600, 3600);
