@@ -2,8 +2,6 @@ package me.emiljimenez21.virtualshop.settings;
 
 import org.mineacademy.fo.settings.SimpleSettings;
 
-import java.util.UUID;
-
 public class Settings extends SimpleSettings {
     public static Boolean databaseEnabled;
     public static String databaseHost;
@@ -14,21 +12,17 @@ public class Settings extends SimpleSettings {
     public static Boolean sound;
     public static Integer databasePort;
     public static String databasePrefix;
-    public static Boolean reporting;
-    public static String serverUUID;
 
     @Override
     protected int getConfigVersion() {
-        return 4;
+        return 5;
     }
 
     private static void init() {
-        pathPrefix(null);
+        MAIN_COMMAND_ALIASES = getCommandList("Command_Aliases");
+
         prefix = getString("prefix");
         sound = getBoolean("sound");
-
-        reporting = getBoolean("report_errors_to_dev");
-        serverUUID = getOrSetDefault("server_uuid", UUID.randomUUID().toString());
 
         pathPrefix("mysql");
         databaseEnabled = getBoolean("enabled");

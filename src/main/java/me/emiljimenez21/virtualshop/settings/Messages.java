@@ -3,9 +3,13 @@ package me.emiljimenez21.virtualshop.settings;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.mineacademy.fo.Common;
+import org.mineacademy.fo.remain.Remain;
 import org.mineacademy.fo.settings.SimpleLocalization;
 
+import java.text.DecimalFormat;
+
 public class Messages extends SimpleLocalization {
+    public static DecimalFormat formatter = new DecimalFormat("#,##0.00###");
     private static final ChatColor PLAYER_COLOR = ChatColor.AQUA;
     private static final ChatColor QUANTITY_COLOR = ChatColor.YELLOW;
     private static final ChatColor ITEM_COLOR = ChatColor.BLUE;
@@ -23,19 +27,21 @@ public class Messages extends SimpleLocalization {
     }
 
     public static void send(CommandSender sender, String message) {
-        Common.tell(sender, Settings.prefix + Messages.BASE_COLOR + message);
+        Common.setTellPrefix("");
+        Common.tellNoPrefix(sender, "{prefix}" + Messages.BASE_COLOR + message);
     }
 
     public static void broadcast(String message) {
-        Common.broadcast(Settings.prefix + Messages.BASE_COLOR + message);
+        Common.setTellPrefix("");
+        Common.broadcast("{prefix}" + Settings.prefix + Messages.BASE_COLOR + message);
     }
 
     public static void send(org.bukkit.entity.Player player, String message) {
-        Common.tell(player, Settings.prefix + Messages.BASE_COLOR + message);
+        Common.tell(player, "{prefix}" + Settings.prefix + Messages.BASE_COLOR + message);
     }
 
     public static String formatPrice(double price) {
-        return PRICE_COLOR + "$" + String.format("%.2f", price) + BASE_COLOR;
+        return PRICE_COLOR + "$" + formatter.format(price) + BASE_COLOR;
     }
 
     public static String formatPrice(String price) {
@@ -87,7 +93,7 @@ public class Messages extends SimpleLocalization {
         STOCK_SELLER_LOWEST_PRICE = getString("seller-lowest-price");
         STOCK_SELLER_NO_STOCK = getString("seller-no-stock");
         STOCK_SELF_NO_STOCK = getString("self-no-stock");
-        STOCK_CANCEL_NO_STOCK =getString("cancel-no-stock");
+        STOCK_CANCEL_NO_STOCK = getString("cancel-no-stock");
 
         pathPrefix("messages.error");
         ERROR_NO_RESULTS = getString("no-results");

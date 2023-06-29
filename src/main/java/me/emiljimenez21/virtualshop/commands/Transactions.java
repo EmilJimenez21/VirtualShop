@@ -25,7 +25,7 @@ public class Transactions extends ShopCommand {
         List<String> response = new ArrayList<>();
         OfflinePlayer player = null;
 
-        if(sender.hasPermission("virtualshop.sales.others")) {
+        if (sender.hasPermission("virtualshop.sales.others")) {
             if (args.length == 1) {
                 for (OfflinePlayer user : Bukkit.getOfflinePlayers()) {
                     response.add(user.getName());
@@ -54,14 +54,11 @@ public class Transactions extends ShopCommand {
     }
 
     @Override
-    protected void onCommand() {
-        super.onCommand();
-        Virtualshop.getAnalytics().incrementSales();
-
-        if(sender.hasPermission("virtualshop.sales.others")) {
+    public void commandLogic() {
+        if (sender.hasPermission("virtualshop.sales.others")) {
             if (args.length < 1 || args.length > 2) {
                 user.playErrorSound();
-                Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + "Command Usage: " + Messages.HELP_SALES
+                Messages.send(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_SALES
                         .replace("<player>", Messages.formatPlayer("<player>"))
                         .replace("[page]", Messages.formatAmount("[page]"))
                 );
@@ -80,7 +77,7 @@ public class Transactions extends ShopCommand {
         } else {
             if (args.length > 1) {
                 user.playErrorSound();
-                Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + "Command Usage: " + Messages.HELP_SALES
+                Messages.send(sender,  Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_SALES
                         .replace("<player> ", "")
                         .replace("[page]", Messages.formatAmount("[page]"))
                 );
@@ -98,7 +95,7 @@ public class Transactions extends ShopCommand {
 
         List<Transaction> transactions = Virtualshop.getDatabase().retrieveUserTransactions(player.uuid.toString());
 
-        if(transactions.size() == 0) {
+        if (transactions.size() == 0) {
             user.playErrorSound();
             Messages.send(sender, Messages.SALES_NO_SALES
                     .replace("{seller}", Messages.formatPlayer(player.name))
@@ -115,24 +112,27 @@ public class Transactions extends ShopCommand {
             page = 1;
         }
 
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "TRANSACTIONS " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatPlayer(player.name), '='));
-        for(int i = start; i < (start + page_size); i++) {
+        Messages.send(sender, Common.chatLineSmooth());
+        Messages.send(sender, ChatUtil.center(ChatColor.GRAY + "TRANSACTIONS " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatPlayer(player.name), '='));
+
+        for (int i = start; i < (start + page_size); i++) {
             try {
                 String seller = transactions.get(i).seller.name.equalsIgnoreCase(sender.getName()) ? "I" : transactions.get(i).seller.name;
                 String buyer = transactions.get(i).buyer.name.equalsIgnoreCase(sender.getName()) ? "me" : transactions.get(i).buyer.name;
-                Common.tell(sender, ChatUtil.center(Messages.SALES_SALE
+                Messages.send(sender,  Messages.SALES_SALE
                         .replace("{seller}", Messages.formatPlayer(seller))
                         .replace("{buyer}", Messages.formatPlayer(buyer))
                         .replace("{amount}", Messages.formatAmount(transactions.get(i).quantity))
                         .replace("{item}", Messages.formatItem(transactions.get(i).item))
                         .replace("{price}", Messages.formatPrice(transactions.get(i).price))
-                    )
                 );
-            } catch (Exception e){
+            } catch (Exception e) {
                 break;
             }
         }
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '='));
+
+        Messages.send(sender, ChatUtil.center(ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '='));
+        Messages.send(sender, Common.chatLineSmooth());
 
     }
 }

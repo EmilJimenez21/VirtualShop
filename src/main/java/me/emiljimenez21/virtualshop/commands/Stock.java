@@ -24,7 +24,7 @@ public class Stock extends ShopCommand {
         List<String> response = new ArrayList<>();
         OfflinePlayer player = null;
 
-        if(sender.hasPermission("virtualshop.stock.others")) {
+        if (sender.hasPermission("virtualshop.stock.others")) {
             if (args.length == 1) {
                 for (OfflinePlayer user : Bukkit.getOfflinePlayers()) {
                     response.add(user.getName());
@@ -53,15 +53,12 @@ public class Stock extends ShopCommand {
     }
 
     @Override
-    protected void onCommand() {
-        super.onCommand();
+    public void commandLogic() {
 
-        Virtualshop.getAnalytics().incrementStock();
-
-        if(sender.hasPermission("virtualshop.stock.others")) {
+        if (sender.hasPermission("virtualshop.stock.others")) {
             if (args.length > 2 || args.length < 1) {
                 user.playErrorSound();
-                Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_STOCK
+                Messages.send(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_STOCK
                         .replace("<player>", Messages.formatPlayer("<player>"))
                         .replace("[page]", Messages.formatAmount("[page]"))
                 );
@@ -72,25 +69,26 @@ public class Stock extends ShopCommand {
                 return;
             }
 
-            if(args.length == 2) {
-                if(!loadPage(1)){
+            if (args.length == 2) {
+                if (!loadPage(1)) {
                     return;
                 }
             }
         } else {
-            if(args.length > 1){
+            if (args.length > 1) {
                 user.playErrorSound();
-                Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_STOCK
-                        .replace("<player> ", "")
-                        .replace("[page]", Messages.formatAmount("[page]"))
+                Messages.send(sender, 
+                        Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_STOCK
+                                .replace("<player> ",  "")
+                                .replace("[page]", Messages.formatAmount("[page]"))
                 );
                 return;
             }
             // Set the player to the current user
             player = user;
 
-            if(args.length == 1) {
-                if(!loadPage(0)){
+            if (args.length == 1) {
+                if (!loadPage(0)) {
                     return;
                 }
             }
@@ -98,10 +96,12 @@ public class Stock extends ShopCommand {
 
         List<me.emiljimenez21.virtualshop.objects.Stock> stocks = Virtualshop.getDatabase().retrieveUserStock(player.uuid.toString());
 
-        if(stocks.size() == 0) {
+        if (stocks.size() == 0) {
             user.playErrorSound();
-            Messages.send(sender, Messages.STOCK_SELLER_NO_STOCK
-                .replace("{seller}", Messages.formatPlayer(player.name)));
+            Messages.send(sender, 
+                    Messages.STOCK_SELLER_NO_STOCK
+                            .replace("{seller}", Messages.formatPlayer(player.name))
+            );
             return;
         }
 
@@ -114,21 +114,25 @@ public class Stock extends ShopCommand {
             page = 1;
         }
 
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatPlayer(player.name), '='));
-        for(int i = start; i < (start + page_size); i++) {
+        Messages.send(sender, Common.chatLineSmooth());
+        Messages.send(sender, ChatUtil.center(ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatPlayer(player.name), '-'));
+
+        for (int i = start; i < (start + page_size); i++) {
             try {
-                Common.tell(sender, ChatUtil.center(Messages.STOCK_LISTING
+                Messages.send(sender, 
+                        Messages.STOCK_LISTING
                                 .replace("{seller}", Messages.formatPlayer(stocks.get(i).seller.name))
                                 .replace("{amount}", Messages.formatAmount(stocks.get(i).quantity))
                                 .replace("{item}", Messages.formatItem(stocks.get(i).item))
                                 .replace("{price}", Messages.formatPrice(stocks.get(i).price))
-                        )
                 );
-            } catch (Exception e){
+            } catch (Exception e) {
                 break;
             }
         }
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '='));
+
+        Messages.send(sender, ChatUtil.center(ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '='));
+        Messages.send(sender, Common.chatLineSmooth());
 
     }
 }

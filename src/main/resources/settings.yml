@@ -1,15 +1,15 @@
-Version: 4
-Locale: "en"
-prefix: "&8(&9&lShop&8) "
-sound: true # Enabling this features plays sounds when a player uses the shop
-report_errors_to_dev: true # Enabling this feature will report errors to the developer
+Version: 5
+Locale: en
+prefix: '&8(&5&lShop&8) '
+sound: true
 mysql:
   enabled: false
-  host: "localhost"
+  host: localhost
   port: 3306
-  user: "mc"
-  pass: "password"
-  name: "minecraft"
-  prefix: "shop_"
-
-Command_Aliases: [virturalshop, vs]
+  user: mc
+  pass: password
+  name: minecraft
+  prefix: shop_
+Command_Aliases:
+  - 'virtualshop'
+  - 'vs'

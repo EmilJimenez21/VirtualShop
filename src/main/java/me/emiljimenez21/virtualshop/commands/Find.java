@@ -23,11 +23,11 @@ public class Find extends ShopCommand {
     protected List<String> tabComplete() {
         List<String> response = new ArrayList<>();
 
-        if(args.length == 1) {
+        if (args.length == 1) {
             response.addAll(Virtualshop.getItems().listNames());
         }
 
-        if(args.length == 2) {
+        if (args.length == 2) {
             response.add("[page]");
         }
 
@@ -35,36 +35,48 @@ public class Find extends ShopCommand {
     }
 
     @Override
-    protected void onCommand() {
-        super.onCommand();
-        Virtualshop.getAnalytics().incrementFind();
-        // Blueprint for arguments
-        if(args.length < 1 || args.length > 2) {
-            user.playErrorSound();
-            Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_FIND
-                    .replace("<item>", Messages.formatItem("<item>"))
-                    .replace("[page]", Messages.formatAmount("[page]"))
-            );
-            return;
-        }
+    public void commandLogic() {
+        List<Stock> stocks;
 
-        if(!loadItem(0)){
-            return;
-        }
+        // Show what's available
+        if (args.length == 0) {
+            stocks = Virtualshop.getDatabase().getBestPrices();
 
-        if(args.length == 2) {
-            if(!loadPage(1)){
+            if (stocks.size() == 0) {
+                user.playErrorSound();
+                Messages.send(sender, Messages.STOCK_NO_STOCK
+                        .replace("{item}", Messages.formatItem("anything")));
                 return;
             }
-        }
+        } else {
 
-        List<Stock> stocks = Virtualshop.getDatabase().retrieveItemStock(item.getName());
+            if (args.length < 1 || args.length > 2) {
+                user.playErrorSound();
+                Messages.send(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_FIND
+                        .replace("<item>", Messages.formatItem("<item>"))
+                        .replace("[page]", Messages.formatAmount("[page]"))
+                );
+                return;
+            }
 
-        if(stocks.size() == 0) {
-            user.playErrorSound();
-            Messages.send(sender, Messages.STOCK_NO_STOCK
-                .replace("{item}", Messages.formatItem(item.getName())));
-            return;
+            if (!loadItem(0)) {
+                return;
+            }
+
+            if (args.length == 2) {
+                if (!loadPage(1)) {
+                    return;
+                }
+            }
+
+            stocks = Virtualshop.getDatabase().retrieveItemStock(item.getName());
+
+            if (stocks.size() == 0) {
+                user.playErrorSound();
+                Messages.send(sender, Messages.STOCK_NO_STOCK
+                        .replace("{item}", Messages.formatItem(item.getName())));
+                return;
+            }
         }
 
         int page_size = 8;
@@ -76,20 +88,27 @@ public class Find extends ShopCommand {
             page = 1;
         }
 
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatItem(item.getName().toUpperCase() + ChatColor.DARK_GRAY), '='));
-        for(int i = start; i < (start + page_size); i++) {
+        Messages.send(sender, Common.chatLineSmooth());
+        if(item != null) {
+            Messages.send(sender, ChatUtil.center(ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatItem(item.getName().toUpperCase() + ChatColor.DARK_GRAY), '='));
+        } else {
+            Messages.send(sender, ChatUtil.center(ChatColor.GRAY + "STOCK " + ChatColor.BOLD + ChatColor.LIGHT_PURPLE + " >> " + Messages.formatItem("Best deals".toUpperCase() + ChatColor.DARK_GRAY), '='));
+        }
+
+        for (int i = start; i < (start + page_size); i++) {
             try {
-                Common.tell(sender, ChatUtil.center(Messages.STOCK_LISTING
-                        .replace("{seller}", Messages.formatPlayer(stocks.get(i).seller.name))
-                        .replace("{amount}", Messages.formatAmount(stocks.get(i).quantity))
-                        .replace("{item}", Messages.formatItem(stocks.get(i).item))
-                        .replace("{price}", Messages.formatPrice(stocks.get(i).price))
-                        )
+                Messages.send(sender, Messages.STOCK_LISTING
+                                .replace("{seller}", Messages.formatPlayer(stocks.get(i).seller.name))
+                                .replace("{amount}", Messages.formatAmount(stocks.get(i).quantity))
+                                .replace("{item}", Messages.formatItem(stocks.get(i).item))
+                                .replace("{price}", Messages.formatPrice(stocks.get(i).price))
                 );
-            } catch (Exception e){
+            } catch (Exception e) {
                 break;
             }
         }
-        Common.tell(sender, ChatUtil.center( ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '='));
+
+        Messages.send(sender, ChatUtil.center(ChatColor.GRAY + "PAGE " + ChatColor.YELLOW + page + ChatColor.GRAY + " OF " + ChatColor.YELLOW + pages + ChatColor.DARK_GRAY, '='));
+        Messages.send(sender, Common.chatLineSmooth());
     }
 }

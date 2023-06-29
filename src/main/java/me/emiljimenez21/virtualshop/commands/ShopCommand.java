@@ -4,11 +4,12 @@ import me.emiljimenez21.virtualshop.managers.PlayerManager;
 import me.emiljimenez21.virtualshop.objects.ShopItem;
 import me.emiljimenez21.virtualshop.objects.ShopUser;
 import me.emiljimenez21.virtualshop.settings.Messages;
+import org.mineacademy.fo.command.SimpleCommand;
 import org.mineacademy.fo.command.SimpleSubCommand;
 
 import java.util.concurrent.TimeUnit;
 
-public abstract class ShopCommand extends  SimpleSubCommand  {
+public abstract class ShopCommand extends SimpleCommand {
     protected ShopUser user;
     protected ShopItem item = null;
     protected Integer amount = null;
@@ -23,17 +24,29 @@ public abstract class ShopCommand extends  SimpleSubCommand  {
     @Override
     protected void onCommand() {
         user = PlayerManager.getPlayer(getPlayer().getUniqueId().toString());
-        if(!hasPerm("virtualshop.admin")) {
+
+        if (!hasPerm("virtualshop.admin")) {
             setCooldown(3, TimeUnit.SECONDS);
         }
+
+        commandLogic();
+
+        item = null;
+        amount = null;
+        page = 1;
+        price = null;
+        player = null;
     }
+
+    public abstract void commandLogic();
 
     protected boolean loadItem(Integer ARG_ITEM) {
         item = new ShopItem(args[ARG_ITEM]);
-        if(!item.exists){
+        if (!item.exists) {
             user.playErrorSound();
-            Messages.send(sender,
-                    Messages.ERROR_UNKNOWN_ITEM
+            Messages.send(
+                    sender,
+                    Messages.BASE_COLOR + Messages.ERROR_UNKNOWN_ITEM
                             .replace(
                                     "{item}",
                                     Messages.formatItem(args[ARG_ITEM])
@@ -47,7 +60,7 @@ public abstract class ShopCommand extends  SimpleSubCommand  {
     protected boolean loadPlayer(Integer ARG_PLAYER) {
         try {
             player = PlayerManager.getPlayer(args[ARG_PLAYER]);
-            if(player == null) {
+            if (player == null) {
                 throw new Exception("That player does not exist");
             }
         } catch (Exception e) {
@@ -64,7 +77,7 @@ public abstract class ShopCommand extends  SimpleSubCommand  {
     }
 
     protected boolean loadPage(Integer ARG_PAGE) {
-                try {
+        try {
             page = Integer.parseInt(args[ARG_PAGE]);
             if (page < 0) {
                 throw new Exception("The page number must be greater than 0");
@@ -80,10 +93,10 @@ public abstract class ShopCommand extends  SimpleSubCommand  {
     protected boolean loadPrice(Integer ARG_PRICE) {
         try {
             price = Double.parseDouble(args[ARG_PRICE]);
-            if(price <= 0) {
+            if (price < 0.001) {
                 throw new Exception("Price needs to be greater than 0.00");
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             user.playErrorSound();
             Messages.send(sender, Messages.ERROR_BAD_PRICE);
             return false;

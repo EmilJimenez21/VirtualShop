@@ -24,17 +24,17 @@ public class Buy extends ShopCommand {
     protected List<String> tabComplete() {
         List<String> response = new ArrayList<>();
 
-        if(args.length == 1) {
+        if (args.length == 1) {
             response.addAll(Virtualshop.getItems().listNames());
             response.add("held");
             response.add("hand");
         }
 
-        if(args.length == 2) {
+        if (args.length == 2) {
             response.add("<amount>");
         }
 
-        if(args.length == 3) {
+        if (args.length == 3) {
             response.add("[price]");
         }
 
@@ -42,13 +42,10 @@ public class Buy extends ShopCommand {
     }
 
     @Override
-    protected void onCommand() {
-        super.onCommand();
-        Virtualshop.getAnalytics().incrementBuy();
-
-        if(args.length < 2 || args.length > 3) {
+    public void commandLogic() {
+        if (args.length < 2 || args.length > 3) {
             user.playErrorSound();
-            Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_BUY
+            sender.sendMessage(Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_BUY
                     .replace("<item>", Messages.formatItem("<item>"))
                     .replace("<amount>", Messages.formatAmount("<amount>"))
                     .replace("[price]", Messages.formatPrice("[price]"))
@@ -57,13 +54,13 @@ public class Buy extends ShopCommand {
         }
 
         // Die if can't load the item or the amount
-        if(!loadItem(0) || !loadAmount(1)){
+        if (!loadItem(0) || !loadAmount(1)) {
             return;
         }
 
         // If the price is set then load the price or die
-        if(args.length == 3){
-            if(!loadPrice(2)){
+        if (args.length == 3) {
+            if (!loadPrice(2)) {
                 return;
             }
         }
@@ -71,11 +68,11 @@ public class Buy extends ShopCommand {
         int available_space = user.getAvailableSlots();
         int max_amount = available_space * item.getItem().getMaxStackSize();
 
-        if(max_amount < amount) {
+        if (max_amount < amount) {
             amount = max_amount;
         }
 
-        if(available_space == 0) {
+        if (available_space == 0) {
             user.playErrorSound();
             Messages.send(sender, Messages.ERROR_NO_SPACE);
             return;
@@ -87,16 +84,16 @@ public class Buy extends ShopCommand {
         int purchased_amount = 0;
         double total_price = 0;
 
-        for(Stock stock: stocks) {
+        for (Stock stock : stocks) {
             int purchase_amount;
 
             // Stop buying if i've purchased all I want
-            if(purchased_amount == amount) {
+            if (purchased_amount == amount) {
                 break;
             }
 
             // Stop buying if I am the seller
-            if(stock.seller.uuid.equals(getPlayer().getUniqueId())){
+            if (stock.seller.uuid.equals(getPlayer().getUniqueId())) {
                 // Notify the player they are the cheapest on the market
                 Messages.send(
                         getPlayer(),
@@ -110,8 +107,8 @@ public class Buy extends ShopCommand {
             }
 
             // Stop buying if it's too expensive
-            if(price != null){
-                if(stock.price > price) {
+            if (price != null) {
+                if (stock.price > price) {
                     break;
                 }
             }
@@ -119,7 +116,7 @@ public class Buy extends ShopCommand {
             int remaining_amount = amount - purchased_amount;
 
             // Handle stocks that might be less than what I want to buy
-            if(stock.quantity < remaining_amount) {
+            if (stock.quantity < remaining_amount) {
                 purchase_amount = stock.quantity;
             } else {
                 purchase_amount = remaining_amount;
@@ -128,7 +125,7 @@ public class Buy extends ShopCommand {
             double purchase_price = stock.calcPrice(purchase_amount);
 
             // Check to see if the user can purchase this amount
-            if(HookManager.getBalance(getPlayer()) < purchase_price){
+            if (HookManager.getBalance(getPlayer()) < purchase_price) {
                 user.playErrorSound();
                 Messages.send(sender, Messages.ERROR_NO_FUNDS);
                 return;
@@ -148,7 +145,7 @@ public class Buy extends ShopCommand {
             );
 
             // Create a transaction record
-            if(Virtualshop.getDatabase().createTransaction(tx)){
+            if (Virtualshop.getDatabase().createTransaction(tx)) {
                 total_price += purchase_price;
                 purchased_amount += purchase_amount;
 
@@ -159,7 +156,7 @@ public class Buy extends ShopCommand {
                 Virtualshop.getEconomy().depositPlayer(Bukkit.getOfflinePlayer(stock.seller.uuid), purchase_price);
 
                 // Update the stock
-                if(stock.quantity == purchase_amount) {
+                if (stock.quantity == purchase_amount) {
                     Virtualshop.getDatabase().deleteStock(stock);
                 } else {
                     stock.quantity -= purchase_amount;
@@ -170,7 +167,7 @@ public class Buy extends ShopCommand {
                 getPlayer().getInventory().addItem(item.getItem());
 
                 // Tell the seller how much they sold
-                if(stock.seller.player != null){
+                if (stock.seller.player != null) {
                     stock.seller.playProductSold();
                     Messages.send((CommandSender) stock.seller.player,
                             Messages.SALES_SELLER_SALE
@@ -183,7 +180,7 @@ public class Buy extends ShopCommand {
             }
         }
 
-        if(purchased_amount == 0){
+        if (purchased_amount == 0) {
             user.playErrorSound();
             Messages.send(sender, Messages.STOCK_NO_STOCK
                     .replace("{item}", Messages.formatItem(item.getName()))

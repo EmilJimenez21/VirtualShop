@@ -25,18 +25,18 @@ public class Sell extends ShopCommand {
     protected List<String> tabComplete() {
         List<String> response = new ArrayList<>();
 
-        if(args.length == 1) {
+        if (args.length == 1) {
             response.add("<amount>");
             response.add("all");
         }
 
-        if(args.length == 2) {
+        if (args.length == 2) {
             response.addAll(Virtualshop.getItems().listNames());
             response.add("held");
             response.add("hand");
         }
 
-        if(args.length == 3) {
+        if (args.length == 3) {
             response.add("<price>");
         }
 
@@ -44,13 +44,11 @@ public class Sell extends ShopCommand {
     }
 
     @Override
-    protected void onCommand() {
-        super.onCommand();
-        Virtualshop.getAnalytics().incrementSell();
+    public void commandLogic() {
 
-        if(args.length != 3) {
+        if (args.length != 3) {
             user.playErrorSound();
-            Common.tell(sender, Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_SELL
+            sender.sendMessage(Messages.BASE_COLOR + "Command Usage: " + Messages.HELP_SELL
                     .replace("<item>", Messages.formatItem("<item>"))
                     .replace("<amount>", Messages.formatAmount("<amount>"))
                     .replace("<price>", Messages.formatPrice("<price>"))
@@ -58,16 +56,16 @@ public class Sell extends ShopCommand {
             return;
         }
 
-        if(args[1].equalsIgnoreCase("hand") || args[1].equalsIgnoreCase("held")){
+        if (args[1].equalsIgnoreCase("hand") || args[1].equalsIgnoreCase("held")) {
             ItemStack hand = getPlayer().getInventory().getItemInMainHand();
             item = new ShopItem(Virtualshop.getItems().get(hand));
         } else {
-            if(!loadItem(1)){
+            if (!loadItem(1)) {
                 return;
             }
         }
 
-        if(item.getItem().isSimilar(new ItemStack(Material.AIR))){
+        if (item.getItem().isSimilar(new ItemStack(Material.AIR))) {
             user.playErrorSound();
             Messages.send(sender, Messages.ERROR_FORBIDDEN_SALE
                     .replace("{item}", Messages.formatItem(item.getName()))
@@ -75,7 +73,7 @@ public class Sell extends ShopCommand {
             return;
         }
 
-        if(item.isModified()) {
+        if (item.isModified()) {
             user.playErrorSound();
             Messages.send(
                     sender,
@@ -84,23 +82,23 @@ public class Sell extends ShopCommand {
             return;
         }
 
-        if(args[0].equalsIgnoreCase("all")){
+        if (args[0].equalsIgnoreCase("all")) {
             amount = user.getQuantity(item.getItem());
         } else {
-            if(!loadAmount(0)){
+            if (!loadAmount(0)) {
                 return;
             }
         }
 
         int available = user.getQuantity(item.getItem());
 
-        if(amount > available){
+        if (amount > available) {
             amount = available;
         }
 
         item.getItem().setAmount(amount);
 
-        if(amount == 0) {
+        if (amount == 0) {
             user.playErrorSound();
             Messages.send(sender, Messages.ERROR_NO_ITEMS
                     .replace("{item}", Messages.formatItem(item.getName()))
@@ -108,7 +106,7 @@ public class Sell extends ShopCommand {
             return;
         }
 
-        if(!loadPrice(2)){
+        if (!loadPrice(2)) {
             return;
         }
 
@@ -122,7 +120,7 @@ public class Sell extends ShopCommand {
 
         Stock dbStock = Virtualshop.getDatabase().createStock(stock);
 
-        if(dbStock != null){
+        if (dbStock != null) {
             user.playPostedListing();
             user.inventory.removeItem(item.getItem());
 
