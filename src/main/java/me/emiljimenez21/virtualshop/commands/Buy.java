@@ -103,7 +103,7 @@ public class Buy extends ShopCommand {
                                         Messages.formatItem(item.getName())
                                 )
                 );
-                break;
+                return;
             }
 
             // Stop buying if it's too expensive
@@ -185,13 +185,15 @@ public class Buy extends ShopCommand {
             Messages.send(sender, Messages.STOCK_NO_STOCK
                     .replace("{item}", Messages.formatItem(item.getName()))
             );
-        } else {
-            user.playPurchased();
-            Messages.send(sender, Messages.SALES_SELF_PURCHASE
-                    .replace("{amount}", Messages.formatAmount(purchased_amount))
-                    .replace("{item}", Messages.formatItem(item.getName()))
-                    .replace("{price}", Messages.formatPrice(total_price))
-            );
+            return;
         }
+
+
+        user.playPurchased();
+        Messages.send(sender, Messages.SALES_SELF_PURCHASE
+                .replace("{amount}", Messages.formatAmount(purchased_amount))
+                .replace("{item}", Messages.formatItem(item.getName()))
+                .replace("{price}", Messages.formatPrice(total_price))
+        );
     }
 }

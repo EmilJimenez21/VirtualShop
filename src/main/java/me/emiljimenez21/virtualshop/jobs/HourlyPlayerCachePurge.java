@@ -7,7 +7,10 @@ import org.mineacademy.fo.Common;
 public class HourlyPlayerCachePurge extends BukkitRunnable {
     @Override
     public void run() {
+        if(PlayerManager.getPlayers().size() == 0) return;
+
         Common.log("Removing offline players from the cache");
-        PlayerManager.getInstance().asyncJob();
+
+        PlayerManager.getInstance().cleanUpCache();
     }
 }

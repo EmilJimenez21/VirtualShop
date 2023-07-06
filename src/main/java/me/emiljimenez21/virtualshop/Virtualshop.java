@@ -14,6 +14,7 @@ import me.emiljimenez21.virtualshop.settings.Settings;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.mineacademy.fo.Common;
+import org.mineacademy.fo.model.SpigotUpdater;
 import org.mineacademy.fo.plugin.SimplePlugin;
 import org.mineacademy.fo.settings.YamlStaticConfig;
 
@@ -21,15 +22,27 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Virtualshop extends SimplePlugin {
+    private static SpigotUpdater updater;
     private static DatabaseManager db;
     private static ItemManager itemDB = null;
     private static JobManager jobManager = null;
     private static Economy economy = null;
 
+    public int getMetricsPluginId() {
+        return 7227;
+    }
+
+    @Override
+    public SpigotUpdater getUpdateCheck() {
+        return new SpigotUpdater(35406);
+    }
+
     @Override
     protected void onPluginStart() {
         jobManager = new JobManager();
         itemDB = new ItemManager();
+
+        updater = new SpigotUpdater(35406);
 
         if (itemDB.getDB() == null) {
             Common.logFramed(

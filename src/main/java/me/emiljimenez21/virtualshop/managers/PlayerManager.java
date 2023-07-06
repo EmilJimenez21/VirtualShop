@@ -60,7 +60,7 @@ public class PlayerManager {
         return players;
     }
 
-    public void asyncJob() {
+    public void cleanUpCache() {
         try {
             for (Map.Entry<String, Long> player_expires : player_expiration.entrySet()) {
                 // Check to see if the player is online
