@@ -45,7 +45,7 @@ jobs:
       with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           automatic_release_tag: "LATEST"
-          prerelease: true
+          prerelease: false
           title: "VirtualShop ${{ steps.getVersion.outputs.version }}"
           files: |
             ./target/virtualshop-*.jar
