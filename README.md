@@ -64,4 +64,7 @@ No, this plugin is not designed to support NBT items. Players can buy and sell i
 # Suggestions or Bug Reports?
 Create an Issue on GitHub with either the "Bug" tag or "Feature Request" tag.
 
+# Plugin Metrics
+![BStats Plugin Usage](https://bstats.org/signatures/bukkit/VirtualShopPlugin.svg)
+
 ### Powered By [Foundation](https://github.com/kangarko/Foundation)
